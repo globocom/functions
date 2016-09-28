@@ -1,7 +1,10 @@
 .PHONY: run test
 
+setup:
+	npm install
+
 run:
-	PORT=8100 ./node_modules/.bin/nf -j Procfile.local start
+	npm run start_dev
 
 test:
 	npm test
