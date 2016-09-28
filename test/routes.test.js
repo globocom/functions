@@ -47,7 +47,7 @@ describe('PUT /functions/:namespace/:id', () => {
                 .expect('Content-Type', /json/)
                 .expect(400, {
                     error: 'TypeError: a.b is not a function',
-                    stack: 'at c (codes/crazy.js:3)\nat codes/crazy.js:5'
+                    stack: 'at c (codes/crazy.js:3)\nat codes/crazy.js:5\nat codes/crazy.js:6'
                 }, done);
         });
     });
