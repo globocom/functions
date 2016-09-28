@@ -1,0 +1,28 @@
+{
+  "name": "backstage-functions",
+  "version": "0.1.0",
+  "description": "Remote serverless code executor",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "hiredis": "^0.5.0",
+    "ioredis": "^2.3.0",
+    "jsonschema": "^1.1.0",
+    "morgan": "^1.7.0",
+    "winston": "^2.2.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "deepcopy": "^0.6.3",
+    "foreman": "^2.0.0",
+    "mocha": "^3.0.2",
+    "nodemon": "^1.10.2",
+    "supertest": "^2.0.0"
+  }
+}

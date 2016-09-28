@@ -1,0 +1,9 @@
+web: ./node_modules/.bin/nodemon lib/app.js
+
+redis_sentinel1: redis-server conf/redis-cluster/node1/sentinel.conf --sentinel --daemonize no
+redis_sentinel2: redis-server conf/redis-cluster/node2/sentinel.conf --sentinel --daemonize no
+redis_sentinel3: redis-server conf/redis-cluster/node3/sentinel.conf --sentinel --daemonize no
+
+redis_server1: redis-server conf/redis-cluster/node1/redis.conf --daemonize no
+redis_server2: redis-server conf/redis-cluster/node2/redis.conf --daemonize no
+redis_server3: redis-server conf/redis-cluster/node3/redis.conf --daemonize no
