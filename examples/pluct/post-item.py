@@ -1,29 +1,29 @@
 import pluct
 
-functions = pluct.resource('http://localhost:8100')
-
-codes = functions.rel('codes')
-
+functions = pluct.resource('http://localhost:8100').rel('functions')
 
 code = '''
-const requests = require('requests');
-Backstage.define('transform', (x, callback) => {
+function main (x, callback) {
     var result = x * 10;
     callback(null, {marcos: result});
-});
+};
 '''
 
-new_code = codes.rel('update',
-          params={'id': 'my-code'},
+new_code = functions.rel('update',
+          params={'id': 'my-code', 'namespace': 'backstage'},
           data={'code': code})
 
-result = new_code.rel('runDefine', params={'define': 'transform'}, data={
-    'args': [
-        {
-            'resource': {
-                'name': 'Marcos',
+result = functions.rel(
+    'run',
+    params={'id': 'my-code', 'namespace': 'backstage'},
+    data={
+        'args': [
+            {
+                'resource': {
+                    'name': 'Marcos',
+                },
             },
-        },
-    ]
-})
+        ]
+    }
+)
 print(result)

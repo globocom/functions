@@ -34,7 +34,6 @@ describe('Storage', () => {
                 id: 'test',
                 code: 'a = 1;',
                 hash: '123',
-                defines: ['a', 'b'],
             };
             storage.putCode('backstage', 'test', code)
                 .then((x) => {
@@ -45,7 +44,6 @@ describe('Storage', () => {
                     expect(code.id).to.be.eql('test');
                     expect(code.code).to.be.eql('a = 1;');
                     expect(code.hash).to.be.eql('123');
-                    expect(code.defines).to.be.eql(['a', 'b']);
                     done();
                 }, (err) => {
                     done(err);
@@ -77,7 +75,6 @@ describe('Storage', () => {
                 id,
                 code: 'a = 1;',
                 hash: '123',
-                defines: ['a', 'b'],
             };
             storage.putCode(namespace, id, code)
                 .then((putResponse) => {
@@ -133,7 +130,6 @@ describe('Storage', () => {
                     id,
                     code: 'b = 1;',
                     hash: '123',
-                    defines: ['b'],
                 };
 
                 storage
@@ -166,7 +162,6 @@ describe('Storage', () => {
                     id,
                     code: 'b = 1;',
                     hash: '123a',
-                    defines: ['b'],
                 };
 
                 storage
@@ -206,7 +201,6 @@ describe('Storage', () => {
                     id,
                     code: 'c = 1;',
                     hash: '123a',
-                    defines: ['c'],
                 };
 
                 storage

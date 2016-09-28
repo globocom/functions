@@ -14,14 +14,6 @@ describe('Sandbox', () => {
             context = testSandbox.createEmptyContext('test');
         });
 
-        it('should return context with Backstage defines', () => {
-            expect(context.Backstage.defines).to.eql({});
-        });
-
-        it('should return context with Backstage define', () => {
-            expect(context.Backstage.define).to.exist;
-        });
-
         it('should return context with Backstage modules', () => {
             expect(context.Backstage.modules).to.eql({});
         });
@@ -54,38 +46,28 @@ describe('Sandbox', () => {
             expect(context.relativeRequire).to.exist;
         });
 
-        it('should return context with define', () => {
-            expect(context.define).to.exist;
-        });
-
         it.skip('should return context with Backstage collection', () => {
             expect(context.Backstage.collection).to.exist;
         });
     });
 
-    describe('#discoveryDefines()', () => {
-        describe('when some functions are defined', () => {
-            it('should return found defines', () => {
-                let code = `define('preChule', ()=> {});
-                Backstage.define('beforeSave', () => {});
-                `;
+    describe('#testSyntaxError()', () => {
+        describe('when code is clean', () => {
+            it('should not return any error', () => {
+                let code = `function main() {}`;
 
-                let defines = testSandbox.discoveryDefines('test', code);
-                expect(defines).to.be.eql([
-                    'preChule',
-                    'beforeSave',
-                ]);
+                let result = testSandbox.testSyntaxError('backstage', 'test', code);
+                expect(result).to.be.null;
             });
         });
 
-        describe('when any functions are not defined', () => {
-            it('should return found defines', () => {
-                let code = `function none() {};
-                none();
-                `;
+        describe('when code has any SyntaxError', () => {
+            it('should raise an error', () => {
+                let code = `var a = [};`;
 
-                let defines = testSandbox.discoveryDefines('test', code);
-                expect(defines).to.be.eql([]);
+                let result = testSandbox.testSyntaxError('backstage', 'test', code);
+                expect(result.error).to.be.eql('SyntaxError: Unexpected token }');
+                expect(result.stack).to.be.eql('');
             });
         });
     });

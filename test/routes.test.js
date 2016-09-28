@@ -6,7 +6,7 @@ const routes = require('../lib/routes');
 describe('PUT /functions/:namespace/:id', () => {
     describe('when code is clean', () => {
         it('should return a error', (done) => {
-            let code = `define('afterSave', () => {});`;
+            let code = `function main() {}`;
 
             request(routes)
                 .put('/functions/backstage/correct')
@@ -14,11 +14,8 @@ describe('PUT /functions/:namespace/:id', () => {
                 .expect('Content-Type', /json/)
                 .expect(200, {
                     id: 'correct',
-                    code: `define('afterSave', () => {});`,
-                    defines: [
-                        'afterSave',
-                    ],
-                    hash: '85f4fd8afe58d5ea4f1749650f0724a6a3164a1b',
+                    code: `function main() {}`,
+                    hash: 'c177063dc3780c2fe9b4fdc913650e8147c9b8b0',
                 }, done);
         });
     });
@@ -50,7 +47,7 @@ describe('PUT /functions/:namespace/:id', () => {
                 .expect('Content-Type', /json/)
                 .expect(400, {
                     error: 'TypeError: a.b is not a function',
-                    stack: 'at c (crazy.js:3)\nat crazy.js:5'
+                    stack: 'at c (codes/crazy.js:3)\nat codes/crazy.js:5'
                 }, done);
         });
     });
