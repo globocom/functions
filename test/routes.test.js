@@ -3,13 +3,13 @@ const request = require('supertest');
 
 const routes = require('../lib/routes');
 
-describe('PUT /codes/:id', () => {
+describe('PUT /functions/:namespace/:id', () => {
     describe('when code is clean', () => {
         it('should return a error', (done) => {
             let code = `define('afterSave', () => {});`;
 
             request(routes)
-                .put('/codes/correct')
+                .put('/functions/backstage/correct')
                 .send({code})
                 .expect('Content-Type', /json/)
                 .expect(200, {
@@ -26,7 +26,7 @@ describe('PUT /codes/:id', () => {
     describe('when code has a syntax error', () => {
         it('should return a error', (done) => {
             request(routes)
-                .put('/codes/invalid')
+                .put('/functions/backstage/invalid')
                 .send({code: '{)'})
                 .expect('Content-Type', /json/)
                 .expect(400, {
@@ -45,7 +45,7 @@ describe('PUT /codes/:id', () => {
             c()`;
 
             request(routes)
-                .put('/codes/crazy')
+                .put('/functions/codes/crazy')
                 .send({code})
                 .expect('Content-Type', /json/)
                 .expect(400, {
@@ -60,7 +60,7 @@ describe('PUT /codes/:id', () => {
             let code = 'while(1) {};';
 
             request(routes)
-                .put('/codes/crazy')
+                .put('/functions/codes/timeout')
                 .send({code})
                 .expect('Content-Type', /json/)
                 .expect(400, {
@@ -75,7 +75,7 @@ describe('PUT /codes/:id', () => {
             let code = {wrong: 'yes'};
 
             request(routes)
-                .put('/codes/crazy')
+                .put('/functions/codes/invalid')
                 .send({code})
                 .expect('Content-Type', /json/)
                 .expect(400, {
