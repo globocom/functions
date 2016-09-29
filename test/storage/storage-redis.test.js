@@ -8,7 +8,7 @@ describe('StorageRedis', () => {
     let storage;
 
     before(() => {
-        let newOptions = deepcopy(config.redisSentinel);
+        let newOptions = deepcopy(config.redis);
         newOptions.enableOfflineQueue = true;
         newOptions.keyPrefix = 'test:';
 
