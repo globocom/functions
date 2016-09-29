@@ -1,11 +1,10 @@
 const expect = require('chai').expect;
 const deepcopy = require('deepcopy');
 
-const Storage = require('../lib/storage');
-const config = require('../lib/config');
+const StorageRedis = require('../../lib/storage/storage-redis');
+const config = require('../../lib/config');
 
-
-describe('Storage', () => {
+describe('StorageRedis', () => {
     let storage;
 
     before(() => {
@@ -13,7 +12,7 @@ describe('Storage', () => {
         newOptions.enableOfflineQueue = true;
         newOptions.keyPrefix = 'test:';
 
-        storage = new Storage(newOptions);
+        storage = new StorageRedis(newOptions);
     });
 
     describe('#ping()', () => {

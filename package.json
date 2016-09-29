@@ -4,7 +4,7 @@
   "description": "Remote serverless code executor",
   "main": "index.js",
   "scripts": {
-    "test": "mocha",
+    "test": "mocha --recursive",
     "start_dev": "PORT=8100 nf -j Procfile.local start"
   },
   "author": "",
