@@ -11,7 +11,9 @@ describe('Sandbox', () => {
     describe('#createEmptyContext()', () => {
         let context;
         before(() => {
-            context = testSandbox.createEmptyContext('test');
+            context = testSandbox.createEmptyContext('backstage', 'test', {
+                pluggedAction: true,
+            });
         });
 
         it('should return context with Backstage modules', () => {
@@ -36,6 +38,10 @@ describe('Sandbox', () => {
 
         it('should return context with Buffer', () => {
             expect(context.Buffer).to.equal(Buffer);
+        });
+
+        it('should allow to extends Backstage object', () => {
+            expect(context.Backstage.pluggedAction).to.be.true;
         });
 
         it.skip('should return context with require', () => {
