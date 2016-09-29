@@ -4,7 +4,8 @@
   "description": "Remote serverless code executor",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive",
+    "test": "istanbul cover _mocha --report lcovonly -- --recursive",
+    "send_cover": "istanbul-coveralls",
     "start_dev": "PORT=8100 nf -j Procfile.local start"
   },
   "author": "",
@@ -22,6 +23,8 @@
     "chai": "^3.5.0",
     "deepcopy": "^0.6.3",
     "foreman": "^2.0.0",
+    "istanbul": "^0.4.5",
+    "istanbul-coveralls": "^1.0.3",
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
     "supertest": "^2.0.0"
