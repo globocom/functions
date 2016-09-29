@@ -77,4 +77,51 @@ describe('Sandbox', () => {
             });
         });
     });
+
+    describe('#compileCode() and #runScript()', () => {
+        describe('when code has a const variable', () => {
+            it('should allow to compile two times', (done) => {
+                let namespace = 'backstage';
+                let id = 'test';
+
+                let code1 = {code: 'const a = 10; function main(callback){callback(null, a);}'};
+                let code2 = {code: 'const a = 20; function main(callback){callback(null, a);}'};
+
+                let script1 = testSandbox.compileCode(namespace, id, code1);
+                let script2 = testSandbox.compileCode(namespace, id, code2);
+
+                Promise
+                    .all([
+                        testSandbox.runScript('backstage', 'test', script1, []),
+                        testSandbox.runScript('backstage', 'test', script2, [])
+                    ])
+                    .then(([a, b]) => {
+                        expect(a).to.be.eql(10);
+                        expect(b).to.be.eql(20);
+                        done();
+                    }, (error) => {
+                        done(error);
+                    });
+            });
+        });
+
+        describe('when code has an error', () => {
+            it('should resolve promise as rejected', (done) => {
+                let namespace = 'backstage';
+                let id = 'test';
+                let code = {code: `function main(callback){callback(new Error('An error'));}`};
+                let script = testSandbox.compileCode(namespace, id, code);
+
+                testSandbox
+                    .runScript('backstage', 'test', script, [])
+                    .then(() => {
+                        done(new Error('It is expected an error'));
+                    }, (error) => {
+                        expect(error.message).to.be.eql('An error');
+                        done();
+                    });
+
+            });
+        });
+    });
 });
