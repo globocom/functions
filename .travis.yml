@@ -6,8 +6,7 @@ cache:
 node_js:
   - "6.6.0"
 env:
-  - CXX=g++-4.8
-  - REDIS_ENDPOINT=redis://localhost:6379/0
+  - CXX=g++-4.8 REDIS_ENDPOINT=redis://localhost:6379/0
 services:
   - redis-server
 addons:
