@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const sandbox = require('../lib/sandbox');
+const sandbox = require('../../../lib/domain/sandbox');
 
 describe('Sandbox', () => {
     let testSandbox;

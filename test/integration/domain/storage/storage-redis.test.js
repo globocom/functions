@@ -1,8 +1,8 @@
 const expect = require('chai').expect;
 const deepcopy = require('deepcopy');
 
-const StorageRedis = require('../../lib/storage/redis');
-const config = require('../../lib/config');
+const StorageRedis = require('../../../../lib/domain/storage/redis');
+const config = require('../../../../lib/support/config');
 
 describe('StorageRedis', () => {
     let storage;
