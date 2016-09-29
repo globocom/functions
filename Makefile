@@ -35,3 +35,5 @@ setup_nvm:
 		curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash; \
 	fi
 
+lint:
+	npm run lint
