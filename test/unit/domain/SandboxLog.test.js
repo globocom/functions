@@ -22,7 +22,7 @@ describe('SandboxLog', () => {
   });
 
   it('log', () => {
-    testLog.info('is log', '321');
+    testLog.log('is log', '321');
     expect(memoryStream.writeOutput).to.be.eql(['info: [test] is log 321']);
   });
 
