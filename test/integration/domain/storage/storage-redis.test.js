@@ -35,18 +35,18 @@ describe('StorageRedis', () => {
         hash: '123',
       };
       storage.putCode('backstage', 'test', code)
-                .then((x) => {
-                  expect(x).to.be.eql('OK');
-                  return storage.getCode('backstage', 'test');
-                })
-                .then((code) => {
-                  expect(code.id).to.be.eql('test');
-                  expect(code.code).to.be.eql('a = 1;');
-                  expect(code.hash).to.be.eql('123');
-                  done();
-                }, (err) => {
-                  done(err);
-                });
+        .then((x) => {
+          expect(x).to.be.eql('OK');
+          return storage.getCode('backstage', 'test');
+        })
+        .then((code2) => {
+          expect(code2.id).to.be.eql('test');
+          expect(code2.code).to.be.eql('a = 1;');
+          expect(code2.hash).to.be.eql('123');
+          done();
+        }, (err) => {
+          done(err);
+        });
     });
   });
 
@@ -63,7 +63,7 @@ describe('StorageRedis', () => {
       });
     });
 
-        // when code is found is already tested above
+    // when code is found is already tested above
   });
 
   describe('#delete()', () => {
@@ -76,20 +76,20 @@ describe('StorageRedis', () => {
         hash: '123',
       };
       storage.putCode(namespace, id, code)
-                .then((putResponse) => {
-                  expect(putResponse).to.be.eql('OK');
-                  return storage.deleteCode(namespace, id);
-                })
-                .then((deleteResponse) => {
-                  expect(deleteResponse).to.be.eql(1);
-                  return storage.getCode(namespace, id);
-                })
-                .then((code) => {
-                  expect(code).to.be.null;
-                  done();
-                }, (err) => {
-                  done(err);
-                });
+        .then((putResponse) => {
+          expect(putResponse).to.be.eql('OK');
+          return storage.deleteCode(namespace, id);
+        })
+        .then((deleteResponse) => {
+          expect(deleteResponse).to.be.eql(1);
+          return storage.getCode(namespace, id);
+        })
+        .then((code2) => {
+          expect(code2).to.be.null;
+          done();
+        }, (err) => {
+          done(err);
+        });
     });
   });
 
@@ -105,13 +105,13 @@ describe('StorageRedis', () => {
         const id = 'cache-000';
 
         storage
-                    .getCodeByCache(namespace, id, { preCache })
-                    .then((cacheResponse) => {
-                      expect(cacheResponse).to.be.null;
-                      done();
-                    }, (err) => {
-                      done(err);
-                    });
+          .getCodeByCache(namespace, id, { preCache })
+          .then((cacheResponse) => {
+            expect(cacheResponse).to.be.null;
+            done();
+          }, (err) => {
+            done(err);
+          });
       });
     });
 
@@ -132,18 +132,18 @@ describe('StorageRedis', () => {
         };
 
         storage
-                    .putCode(namespace, id, code)
-                    .then((putResponse) => {
-                      expect(putResponse).to.be.eql('OK');
-                      return storage.getCodeByCache(namespace, id, { preCache });
-                    })
-                    .then((cacheResponse) => {
-                      expect(cacheResponse.preCached).to.be.true;
-                      expect(preCache.called).to.be.true;
-                      done();
-                    }, (err) => {
-                      done(err);
-                    });
+          .putCode(namespace, id, code)
+          .then((putResponse) => {
+            expect(putResponse).to.be.eql('OK');
+            return storage.getCodeByCache(namespace, id, { preCache });
+          })
+          .then((cacheResponse) => {
+            expect(cacheResponse.preCached).to.be.true;
+            expect(preCache.called).to.be.true;
+            done();
+          }, (err) => {
+            done(err);
+          });
       });
     });
 
@@ -164,25 +164,25 @@ describe('StorageRedis', () => {
         };
 
         storage
-                    .putCode(namespace, id, code)
-                    .then((putResponse) => {
-                      expect(putResponse).to.be.eql('OK');
-                      return storage.getCodeByCache(namespace, id, { preCache });
-                    })
-                    .then((cacheResponse) => {
-                      expect(cacheResponse.preCached).to.be.true;
-                      preCache.called = false;
-                      return storage.getCodeByCache(namespace, id, { preCache });
-                    })
-                    .then((cacheResponse) => {
-                      expect(cacheResponse.id).to.be.eql(id);
-                      expect(cacheResponse.code).to.be.eql('b = 1;');
-                      expect(cacheResponse.hash).to.be.eql('123a');
-                      expect(preCache.called).to.be.false;
-                      done();
-                    }, (err) => {
-                      done(err);
-                    });
+          .putCode(namespace, id, code)
+          .then((putResponse) => {
+            expect(putResponse).to.be.eql('OK');
+            return storage.getCodeByCache(namespace, id, { preCache });
+          })
+          .then((cacheResponse) => {
+            expect(cacheResponse.preCached).to.be.true;
+            preCache.called = false;
+            return storage.getCodeByCache(namespace, id, { preCache });
+          })
+          .then((cacheResponse) => {
+            expect(cacheResponse.id).to.be.eql(id);
+            expect(cacheResponse.code).to.be.eql('b = 1;');
+            expect(cacheResponse.hash).to.be.eql('123a');
+            expect(preCache.called).to.be.false;
+            done();
+          }, (err) => {
+            done(err);
+          });
       });
     });
 
@@ -203,34 +203,34 @@ describe('StorageRedis', () => {
         };
 
         storage
-                    .putCode(namespace, id, code)
-                    .then((putResponse) => {
-                      expect(putResponse).to.be.eql('OK');
-                        // populate the cache
-                      return storage.getCodeByCache(namespace, id, { preCache });
-                    })
-                    .then((cacheResponse) => {
-                      expect(cacheResponse.preCachedByHash).to.be.eql('123a');
+          .putCode(namespace, id, code)
+          .then((putResponse) => {
+            expect(putResponse).to.be.eql('OK');
+            // populate the cache
+            return storage.getCodeByCache(namespace, id, { preCache });
+          })
+          .then((cacheResponse) => {
+            expect(cacheResponse.preCachedByHash).to.be.eql('123a');
 
-                        // change item in database
-                      code.code = 'd = 2;';
-                      code.hash = '123b';
-                      return storage.putCode(namespace, id, code);
-                    })
-                    .then((putResponse) => {
-                      preCache.called = false;
-                      return storage.getCodeByCache(namespace, id, { preCache });
-                    })
-                    .then((cacheResponse) => {
-                      expect(cacheResponse.id).to.be.eql(id);
-                      expect(cacheResponse.code).to.be.eql('d = 2;');
-                      expect(cacheResponse.preCachedByHash).to.be.eql('123b');
-                      expect(cacheResponse.hash).to.be.eql('123b');
-                      expect(preCache.called).to.be.true;
-                      done();
-                    }, (err) => {
-                      done(err);
-                    });
+            // change item in database
+            code.code = 'd = 2;';
+            code.hash = '123b';
+            return storage.putCode(namespace, id, code);
+          })
+          .then(() => {
+            preCache.called = false;
+            return storage.getCodeByCache(namespace, id, { preCache });
+          })
+          .then((cacheResponse) => {
+            expect(cacheResponse.id).to.be.eql(id);
+            expect(cacheResponse.code).to.be.eql('d = 2;');
+            expect(cacheResponse.preCachedByHash).to.be.eql('123b');
+            expect(cacheResponse.hash).to.be.eql('123b');
+            expect(preCache.called).to.be.true;
+            done();
+          }, (err) => {
+            done(err);
+          });
       });
     });
   });
