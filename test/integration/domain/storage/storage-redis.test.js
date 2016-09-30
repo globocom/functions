@@ -52,7 +52,7 @@ describe('StorageRedis', () => {
 
 
   describe('#getCode()', () => {
-    describe('when code id not is found', () => {
+    describe('when code id is not found', () => {
       it('should yield a null', (done) => {
         storage.getCode('backstage', 'not-found').then((code) => {
           expect(code).to.be.null;
