@@ -10,8 +10,8 @@ function main (x, callback) {
 '''
 
 new_code = functions.rel('update',
-          params={'id': 'my-code', 'namespace': 'backstage'},
-          data={'code': code})
+                         params={'id': 'my-code', 'namespace': 'backstage'},
+                         data={'code': code})
 
 result = functions.rel(
     'run',
