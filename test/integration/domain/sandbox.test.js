@@ -21,7 +21,7 @@ describe('Sandbox', () => {
     });
 
     it('should return context with console', () => {
-      expect(context.console).to.exist();
+      expect(context.console).to.exist;
     });
 
     it('should return context with exports', () => {

@@ -18,6 +18,7 @@
     "ioredis": "^2.3.0",
     "jsonschema": "^1.1.0",
     "morgan": "^1.7.0",
+    "stack-trace": "^0.0.9",
     "winston": "^2.2.0"
   },
   "devDependencies": {
