@@ -16,6 +16,7 @@ run:
 
 test:
 	npm test
+	$(MAKE) lint
 
 setup_upgrade:
 	-rm -rf node_modules
