@@ -1,1 +1,3 @@
 extends: airbnb
+rules:
+  arrow-body-style: ["error", "as-needed"]
