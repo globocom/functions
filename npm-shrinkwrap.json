@@ -140,9 +140,9 @@
       "resolved": "https://registry.npmjs.org/assertion-error/-/assertion-error-1.0.2.tgz"
     },
     "async": {
-      "version": "1.0.0",
-      "from": "async@>=1.0.0 <1.1.0",
-      "resolved": "https://registry.npmjs.org/async/-/async-1.0.0.tgz"
+      "version": "2.0.1",
+      "from": "async@latest",
+      "resolved": "https://registry.npmjs.org/async/-/async-2.0.1.tgz"
     },
     "async-each": {
       "version": "1.0.1",
@@ -2013,7 +2013,7 @@
     },
     "node-uuid": {
       "version": "1.4.7",
-      "from": "node-uuid@>=1.4.7 <1.5.0",
+      "from": "node-uuid@latest",
       "resolved": "https://registry.npmjs.org/node-uuid/-/node-uuid-1.4.7.tgz"
     },
     "nopt": {
@@ -2297,7 +2297,7 @@
     },
     "request": {
       "version": "2.75.0",
-      "from": "request@2.75.0",
+      "from": "request@latest",
       "resolved": "https://registry.npmjs.org/request/-/request-2.75.0.tgz"
     },
     "require-uncached": {
@@ -2661,7 +2661,14 @@
     "winston": {
       "version": "2.2.0",
       "from": "winston@>=2.2.0 <3.0.0",
-      "resolved": "https://registry.npmjs.org/winston/-/winston-2.2.0.tgz"
+      "resolved": "https://registry.npmjs.org/winston/-/winston-2.2.0.tgz",
+      "dependencies": {
+        "async": {
+          "version": "1.0.0",
+          "from": "async@>=1.0.0 <1.1.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-1.0.0.tgz"
+        }
+      }
     },
     "wordwrap": {
       "version": "1.0.0",
