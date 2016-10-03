@@ -1,13 +1,15 @@
 const expect = require('chai').expect;
 const SandboxRequire = require('../../../../lib/domain/sandbox/SandboxRequire');
 
+const requireFunction = require;
+
 describe('SandboxRequire', () => {
   let sandboxRequire;
+  let encapsulatedRequire;
 
   before(() => {
     const myModule = {
-      'module1': () => { return {} },
-      'module2': () => { return {} },
+      module1: () => ({}),
     };
     sandboxRequire = new SandboxRequire(myModule, '.');
     sandboxRequire.setGlobalModules(['http']);
@@ -20,19 +22,19 @@ describe('SandboxRequire', () => {
     });
 
     it('should returns an avaliable global module', () => {
-      expect(encapsulatedRequire('http')).to.be.eql(require('http'));
+      expect(encapsulatedRequire('http')).to.be.eql(requireFunction('http'));
     });
   });
 
   describe('when we pass an invalid module', () => {
     it('should throws an error if invokes a module that does not exist', () => {
-      let fn = () => encapsulatedRequire('does-not-exist');
-      expect(fn).to.throw(Error, /Cannot find module 'does-not-exist'/)
+      const fn = () => encapsulatedRequire('does-not-exist');
+      expect(fn).to.throw(Error, /Cannot find module 'does-not-exist'/);
     });
 
     it('should throws an error when the module exists but is not accessible', () => {
-      let fn = () => encapsulatedRequire('crypto');
-      expect(fn).to.throw(Error, /Cannot find module 'crypto'/)
+      const fn = () => encapsulatedRequire('crypto');
+      expect(fn).to.throw(Error, /Cannot find module 'crypto'/);
     });
   });
 });

@@ -44,7 +44,7 @@ describe('Sandbox', () => {
       expect(context.Backstage.pluggedAction).to.be.true;
     });
 
-    it.skip('should return context with require', () => {
+    it('should return context with require', () => {
       expect(context.require).to.exist;
     });
 
