@@ -15,5 +15,6 @@ addons:
       - ubuntu-toolchain-r-test
     packages:
       - g++-4.8
+script: make test
 after_success:
   npm run send_cover
