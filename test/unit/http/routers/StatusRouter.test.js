@@ -1,3 +1,5 @@
+/* eslint class-methods-use-this: ['error', { "exceptMethods": ['ping']}] */
+
 const request = require('supertest');
 
 const expect = require('chai').expect;
@@ -39,7 +41,7 @@ describe('GET /status', () => {
         .get('/status')
         .expect('content-type', /^application\/json/)
         .expect((res) => {
-          expect(res.body.services[0].message).to.be.eql('OK')
+          expect(res.body.services[0].message).to.be.eql('OK');
         })
         .expect(200, done);
     });
@@ -55,7 +57,7 @@ describe('GET /status', () => {
         .get('/status')
         .expect('content-type', /^application\/json/)
         .expect((res) => {
-          expect(res.body.services[0].message).to.be.eql('Error: Not working')
+          expect(res.body.services[0].message).to.be.eql('Error: Not working');
         })
         .expect(500, done);
     });
