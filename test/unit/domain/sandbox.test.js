@@ -48,12 +48,8 @@ describe('Sandbox', () => {
       expect(context.require).to.exist;
     });
 
-    it.skip('should return context with relativeRequire', () => {
+    it('should return context with relativeRequire', () => {
       expect(context.relativeRequire).to.exist;
-    });
-
-    it.skip('should return context with Backstage collection', () => {
-      expect(context.Backstage.collection).to.exist;
     });
   });
 
