@@ -2,7 +2,7 @@ const Logger = require('winston').Logger;
 const expect = require('chai').expect;
 const Memory = require('winston').transports.Memory;
 
-const SandboxLog = require('../../../lib/domain/SandboxLog');
+const SandboxLog = require('../../../../lib/domain/sandbox/SandboxLog');
 
 describe('SandboxLog', () => {
   let testLog;
