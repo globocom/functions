@@ -1,33 +1,7 @@
-/* eslint class-methods-use-this: ["error", { "exceptMethods": ["ping"] }] */
-
 const expect = require('chai').expect;
 const Status = require('../../../lib/domain/status');
-const Storage = require('../../../lib/domain/storage');
-
-class WorkingStorage extends Storage {
-  constructor(name = 'TestStorage') {
-    super(name);
-  }
-
-  ping() {
-    return new Promise((accept) => {
-      accept('OK');
-    });
-  }
-}
-
-class NotWorkingStorage extends Storage {
-  constructor(name = 'TestStorage') {
-    super(name);
-  }
-
-  ping() {
-    return new Promise((accept, reject) => {
-      reject(new Error('Not working'));
-    });
-  }
-}
-
+const NotWorkingStorage = require('../../fakes/NotWorkingStorage');
+const WorkingStorage = require('../../fakes/WorkingStorage');
 
 describe('Status', () => {
   describe('run', () => {
@@ -36,11 +10,10 @@ describe('Status', () => {
     const properties = ['name', 'status', 'message', 'time'];
 
     it('should contain mandatory properties on response', (done) => {
-      Promise.all([
-        status1.run(),
-        status2.run(),
-      ]).then(([output1, output2]) => {
+      status1.run().then((output1) => {
         expect(output1).to.include.keys(properties);
+        return status2.run();
+      }).catch((output2) => {
         expect(output2).to.include.keys(properties);
         done();
       });
@@ -57,7 +30,7 @@ describe('Status', () => {
 
     describe('when service is down', () => {
       it('should show FAILED status', (done) => {
-        status2.run().then((output) => {
+        status2.run().catch((output) => {
           expect(output.status).to.eq('FAILED');
           done();
         });

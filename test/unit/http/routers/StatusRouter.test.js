@@ -1,34 +1,9 @@
-/* eslint class-methods-use-this: ['error', { "exceptMethods": ['ping']}] */
-
 const request = require('supertest');
 
 const expect = require('chai').expect;
 const routes = require('../../../../lib/http/routes');
-const Storage = require('../../../../lib/domain/storage');
-
-class WorkingStorage extends Storage {
-  constructor(name = 'TestStorage') {
-    super(name);
-  }
-
-  ping() {
-    return new Promise((accept) => {
-      accept('OK');
-    });
-  }
-}
-
-class NotWorkingStorage extends Storage {
-  constructor(name = 'TestStorage') {
-    super(name);
-  }
-
-  ping() {
-    return new Promise((accept, reject) => {
-      reject(new Error('Not working'));
-    });
-  }
-}
+const NotWorkingStorage = require('../../../fakes/NotWorkingStorage');
+const WorkingStorage = require('../../../fakes/WorkingStorage');
 
 describe('GET /status', () => {
   describe('when storage is working', () => {
