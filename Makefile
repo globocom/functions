@@ -1,4 +1,4 @@
-.PHONY: run test
+.PHONY: run setup test setup_upgrade install_node setup_nvm lint clean
 
 help:
 	@echo '    setup .................... sets up project dependencies'
@@ -18,8 +18,7 @@ test:
 	npm test
 	$(MAKE) lint
 
-setup_upgrade:
-	-rm -rf node_modules
+setup_upgrade: clean
 	npm install
 	npm shrinkwrap
 
@@ -38,3 +37,6 @@ setup_nvm:
 
 lint:
 	npm run lint
+
+clean:
+	-rm -rf node_modules
