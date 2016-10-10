@@ -5,8 +5,10 @@ help:
 	@echo '    run ...................... runs project'
 	@echo '    test ..................... runs tests'
 	@echo '    setup_upgrade ............ upgrades project dependencies'
+	@echo '    clean .................... deletes project dependencies'
 	@echo '    install_node.............. sets up node version'
 	@echo '    setup_nvm ................ sets up nvm'
+	@echo '    lint ..................... runs code linter'
 
 setup: install_node
 	npm install
