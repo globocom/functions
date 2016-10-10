@@ -93,11 +93,15 @@ class FakeSandbox extends Sandbox {
     return new vm.Script(code.code);
   }
 
-  runScript(namespace, codeId, script, args) {
+  runScript(namespace, codeId, script, req) {
     return new Promise((accept, reject) => {
       try {
-        const output = script.runInThisContext();
-        accept({ output, args });
+        const args = req.body.args;
+        accept({
+          body: { args },
+          headers: { 'content-type': 'application/json' },
+          status: 200,
+        });
       } catch (error) {
         reject(error);
       }
@@ -419,10 +423,7 @@ describe('PUT /functions/:namespace/:id', () => {
         .put('/functions/backstage/cached/run')
         .send({ args: [1, 2] })
         .expect(200, {
-          result: {
-            args: [1, 2],
-            output: 'cached',
-          },
+          args: [1, 2],
         }, done);
     });
   });
@@ -433,10 +434,7 @@ describe('PUT /functions/:namespace/:id', () => {
         .put('/functions/backstage/fresh/run')
         .send({ args: [3, 4] })
         .expect(200, {
-          result: {
-            args: [3, 4],
-            output: 'compiled',
-          },
+          args: [3, 4],
         }, done);
     });
   });

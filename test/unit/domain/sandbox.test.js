@@ -80,20 +80,26 @@ describe('Sandbox', () => {
         const namespace = 'backstage';
         const id = 'test';
 
-        const code1 = { code: 'const a = 10; function main(callback){callback(null, a);}' };
-        const code2 = { code: 'const a = 20; function main(callback){callback(null, a);}' };
+        const code1 = { code: `
+          const a = 10;
+          function main(req, res){ res.send(a); }
+        ` };
+        const code2 = { code: `
+          const a = 20;
+          function main(req, res){ res.send(a); }
+        ` };
 
         const script1 = testSandbox.compileCode(namespace, id, code1);
         const script2 = testSandbox.compileCode(namespace, id, code2);
 
         Promise
           .all([
-            testSandbox.runScript('backstage', 'test', script1, []),
-            testSandbox.runScript('backstage', 'test', script2, []),
+            testSandbox.runScript('backstage', 'test', script1, {}),
+            testSandbox.runScript('backstage', 'test', script2, {}),
           ])
-          .then(([a, b]) => {
-            expect(a).to.be.eql(10);
-            expect(b).to.be.eql(20);
+          .then(([res1, res2]) => {
+            expect(res1.body).to.be.eql(10);
+            expect(res2.body).to.be.eql(20);
             done();
           }, (error) => {
             done(error);
@@ -105,7 +111,9 @@ describe('Sandbox', () => {
       it('should resolve promise as rejected', (done) => {
         const namespace = 'backstage';
         const id = 'test';
-        const code = { code: 'function main(callback){callback(new Error(\'An error\'));}' };
+        const code = { code: `
+          function main(req, res){ throw new Error('An error'); }
+        ` };
         const script = testSandbox.compileCode(namespace, id, code);
 
         testSandbox
