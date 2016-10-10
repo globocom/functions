@@ -35,6 +35,19 @@ class FakeStorage extends Storage {
     });
   }
 
+  postCode(namespace, id, code) {
+    this.lastPutCode = code;
+    return new Promise((accept, reject) => {
+      if (id === 'exists') {
+        reject(new Error('Code already exists'));
+      } else if (id === 'error') {
+        reject(new Error('Storage error'));
+      } else {
+        accept(null);
+      }
+    });
+  }
+
   putCode(namespace, id, code) {
     this.lastPutCode = code;
     return new Promise((accept, reject) => {
@@ -103,6 +116,128 @@ describe('GET /functions', () => {
         expect(res.profile).to.endsWith('/_schemas/functions/list');
       })
       .expect(200, done);
+  });
+});
+
+describe('POST /functions/:namespace/:id', () => {
+  before(() => {
+    routes.set('memoryStorage', new FakeStorage());
+  });
+
+  describe('when code is clean and does not exists', () => {
+    it('should return the code', (done) => {
+      const code = 'function main() {}';
+
+      request(routes)
+        .post('/functions/backstage/correct')
+        .send({ code })
+        .expect('Content-Type', /json/)
+        .expect(() => {
+          const memoryStorage = routes.get('memoryStorage');
+          expect(memoryStorage.lastPutCode).to.be.eql({
+            id: 'correct',
+            hash: 'c177063dc3780c2fe9b4fdc913650e8147c9b8b0',
+            code,
+          });
+        })
+        .expect(200, {
+          id: 'correct',
+          code: 'function main() {}',
+          hash: 'c177063dc3780c2fe9b4fdc913650e8147c9b8b0',
+        }, done);
+    });
+  });
+
+  describe('when code is clean and exists', () => {
+    it('should returns an error', (done) => {
+      const code = 'function main() {}';
+
+      request(routes)
+        .post('/functions/backstage/exists')
+        .send({ code })
+        .expect('Content-Type', /json/)
+        .expect(500, {
+          error: 'Code already exists',
+        }, done);
+    });
+  });
+
+  describe('when return any error from storage', () => {
+    it('should return the code', (done) => {
+      const code = 'function main() {}';
+
+      request(routes)
+        .post('/functions/backstage/error')
+        .send({ code })
+        .expect('Content-Type', /json/)
+        .expect(500, {
+          error: 'Storage error',
+        }, done);
+    });
+  });
+
+  describe('when code has a syntax error', () => {
+    it('should return a error', (done) => {
+      request(routes)
+        .post('/functions/backstage/invalid')
+        .send({ code: '{)' })
+        .expect('Content-Type', /application\/json/)
+        .expect(400, {
+          error: 'SyntaxError: Unexpected token )',
+          stack: '',
+        }, done);
+    });
+  });
+
+  describe('when code has a logic error', () => {
+    it('should return a error', (done) => {
+      const code = `let a = {};
+            function c() {
+                a.b();
+            };
+            c()`;
+
+      request(routes)
+        .post('/functions/codes/crazy')
+        .send({ code })
+        .expect('Content-Type', /json/)
+        .expect(400, {
+          error: 'TypeError: a.b is not a function',
+          stack: 'at c (codes/crazy.js:3)\nat codes/crazy.js:5\nat codes/crazy.js:6',
+        }, done);
+    });
+  });
+
+  describe('when code has a timeout error', () => {
+    it('should return a error', (done) => {
+      const code = 'while(1) {};';
+
+      request(routes)
+        .post('/functions/codes/timeout')
+        .send({ code })
+        .expect('Content-Type', /json/)
+        .expect(400, {
+          error: 'Error: Script execution timed out.',
+          stack: '',
+        }, done);
+    });
+  });
+
+  describe('when code is not a string', () => {
+    it('should return a error', (done) => {
+      const code = { wrong: 'yes' };
+
+      request(routes)
+        .post('/functions/codes/invalid')
+        .send({ code })
+        .expect('Content-Type', /^application\/json/)
+        .expect(400, {
+          error: 'Invalid instance',
+          details: [
+            'instance.code is not of a type(s) string',
+          ],
+        }, done);
+    });
   });
 });
 
