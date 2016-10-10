@@ -7,13 +7,11 @@ describe('SandboxResponse', () => {
     let codeResponse;
 
     before((done) => {
-      const callbackFn = (err, responseData) => {
+      const callback = (err, responseData) => {
         codeResponse = responseData;
         done();
       };
-      res = new SandboxResponse({
-        callback: callbackFn,
-      });
+      res = new SandboxResponse({ callback });
       res.send({ result: 'ok' });
     });
 
@@ -32,13 +30,11 @@ describe('SandboxResponse', () => {
     let codeResponse;
 
     before((done) => {
-      const callbackFn = (err, responseData) => {
+      const callback = (err, responseData) => {
         codeResponse = responseData;
         done();
       };
-      res = new SandboxResponse({
-        callback: callbackFn,
-      });
+      res = new SandboxResponse({ callback });
       res.status(201).send({ content: { name: 'foobar' } });
     });
 
@@ -53,13 +49,11 @@ describe('SandboxResponse', () => {
     let codeResponse;
 
     before((done) => {
-      const callbackFn = (err, responseData) => {
+      const callback = (err, responseData) => {
         codeResponse = responseData;
         done();
       };
-      res = new SandboxResponse({
-        callback: callbackFn,
-      });
+      res = new SandboxResponse({ callback });
       res.set('X-FOO', 'bar');
       res.send({ result: 'ok' });
     });
@@ -67,6 +61,35 @@ describe('SandboxResponse', () => {
     it('should sends the response with default status of 200', () => {
       expect(codeResponse.body).to.be.eql({ result: 'ok' });
       expect(codeResponse.status).to.be.eql(200);
+    });
+
+    it('should sends the response with the correct header set', () => {
+      expect(codeResponse.headers['X-FOO']).to.be.eql('bar');
+    });
+  });
+
+  describe('chain headers to send as response', () => {
+    let res;
+    let codeResponse;
+
+    before((done) => {
+      const callback = (err, responseData) => {
+        codeResponse = responseData;
+        done();
+      };
+      res = new SandboxResponse({ callback });
+      res.set('X-FOO', 'bar').set('X-BAR', 'baz');
+      res.send({ result: 'ok' });
+    });
+
+    it('should sends the response with default status of 200', () => {
+      expect(codeResponse.body).to.be.eql({ result: 'ok' });
+      expect(codeResponse.status).to.be.eql(200);
+    });
+
+    it('should sends the response with the correct header set', () => {
+      expect(codeResponse.headers['X-FOO']).to.be.eql('bar');
+      expect(codeResponse.headers['X-BAR']).to.be.eql('baz');
     });
   });
 });
