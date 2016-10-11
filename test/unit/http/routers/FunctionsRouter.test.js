@@ -116,7 +116,6 @@ describe('GET /functions', () => {
       .expect((res) => {
         expect(res.body.items).to.be.eql([]);
         expect(res.body.warning).to.be.eql('List is not implemented yet!');
-
         expect(res.profile).to.endsWith('/_schemas/functions/list');
       })
       .expect(200, done);
@@ -136,6 +135,9 @@ describe('POST /functions/:namespace/:id', () => {
         .post('/functions/backstage/correct')
         .send({ code })
         .expect('Content-Type', /json/)
+        .expect((res) => {
+          expect(res.profile).to.endsWith('/_schemas/functions/item');
+        })
         .expect(() => {
           const memoryStorage = routes.get('memoryStorage');
           expect(memoryStorage.lastPutCode).to.be.eql({
@@ -160,6 +162,9 @@ describe('POST /functions/:namespace/:id', () => {
         .post('/functions/backstage/exists')
         .send({ code })
         .expect('Content-Type', /json/)
+        .expect((res) => {
+          expect(res.profile).to.endsWith('/_schemas/functions/item');
+        })
         .expect(500, {
           error: 'Code already exists',
         }, done);
