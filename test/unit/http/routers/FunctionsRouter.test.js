@@ -127,7 +127,7 @@ describe('POST /functions/:namespace/:id', () => {
     routes.set('memoryStorage', new FakeStorage());
   });
 
-  describe('when code is clean and does not exists', () => {
+  describe('when code is correct and does not exists', () => {
     it('should return the code', (done) => {
       const code = 'function main() {}';
 
@@ -154,7 +154,7 @@ describe('POST /functions/:namespace/:id', () => {
     });
   });
 
-  describe('when code is clean and exists', () => {
+  describe('when code is correct and exists', () => {
     it('should returns an error', (done) => {
       const code = 'function main() {}';
 
@@ -252,7 +252,7 @@ describe('PUT /functions/:namespace/:id', () => {
     routes.set('memoryStorage', new FakeStorage());
   });
 
-  describe('when code is clean', () => {
+  describe('when code is correct', () => {
     it('should return the code', (done) => {
       const code = 'function main() {}';
 
