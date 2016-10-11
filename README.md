@@ -2,8 +2,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/backstage/functions/badge.svg?branch=master)](https://coveralls.io/github/backstage/functions?branch=master)
 
 
-# Backstage Functions!
-Beat your code for you with precision!
+# Backstage Functions
+
+Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Plataform able to store and execute JavaScript code.
 
 ## Requirements
 
@@ -12,15 +13,19 @@ Beat your code for you with precision!
 
 ## Setup
 
-    make setup
+```bash
+make setup
+```
 
 ## Run local
 
-    make run
+```bash
+make run
+```
 
-# Examples
+## How to use
 
-## Create function
+### Create function
 
 ```javascript
 function main(req, res) {
@@ -31,18 +36,48 @@ function main(req, res) {
 
 Send the function as curl to `/functions/:namespace/:name`
 
-`curl -XPUT localhost:8100/functions/example/hello-world -d '{"code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}!` })\n}\n"}' -H 'content-type: application/json'`
+```bash
+curl -i -XPUT http://localhost:8100/functions/example/hello-world \
+    -H 'content-type: application/json' \
+    -d '{"code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}!` })\n}\n"}'
+```
 
-Run the function send a -XPUT to `/functions/:namespace/:name/run`
+Run the function send a `PUT` request to `/functions/:namespace/:name/run`:
 
 ```bash
-curl -XPUT localhost:8100/functions/example/hello-world/run  -H 'content-type: application/json'
-# { "say": "Hello World" }
+curl -i -H 'content-type: application/json' -XPUT http://localhost:8100/functions/example/hello-world/run
+```
+
+Results in something like:
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 22
+ETag: W/"16-soBGetwJPBLt8CqWpBQu+A"
+Date: Tue, 11 Oct 2016 16:51:04 GMT
+Connection: keep-alive
+
+{"say":"Hello World!"}
 ```
 
 If one pass an object at the request payload with name the payload is executed
 
 ```bash
-curl -XPUT localhost:8100/functions/example/hello-world/run  -H 'content-type: application/json' -d '{"name": "John"}'
-# { "say": "Hello John" }
+curl -i -XPUT http://localhost:8100/functions/example/hello-world/run \
+    -H 'content-type: application/json' \
+    -d '{"name": "Pedro"}'
+```
+
+Results in something like:
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 22
+ETag: W/"16-Ino2/umXaZ3xVEhoqyS8aA"
+Date: Tue, 11 Oct 2016 17:13:11 GMT
+Connection: keep-alive
+
+{"say":"Hello Pedro!"}
 ```
