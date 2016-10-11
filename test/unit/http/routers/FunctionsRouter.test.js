@@ -162,9 +162,6 @@ describe('POST /functions/:namespace/:id', () => {
         .post('/functions/backstage/exists')
         .send({ code })
         .expect('Content-Type', /json/)
-        .expect((res) => {
-          expect(res.profile).to.endsWith('/_schemas/functions/item');
-        })
         .expect(500, {
           error: 'Code already exists',
         }, done);
