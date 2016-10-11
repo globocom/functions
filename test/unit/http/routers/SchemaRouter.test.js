@@ -1,4 +1,5 @@
 const request = require('supertest');
+const expect = require('chai').expect;
 
 const routes = require('../../../../lib/http/routes');
 const schemas = require('../../../../lib/domain/schemas');
@@ -9,7 +10,21 @@ describe('GET /_schema/:schema', () => {
       request(routes)
         .get('/_schemas/root')
         .expect('content-type', /json/)
-        .expect(200, schemas.root, done);
+        .expect((res) => {
+          const host = res.request.host;
+          expect(res.body.properties).to.be.eql(schemas.root.properties);
+          expect(res.body.links).to.be.eql([
+            {
+              href: `http://${host}/functions`,
+              rel: 'functions',
+            },
+            {
+              href: `http://${host}/healthcheck`,
+              rel: 'healthcheck',
+            },
+          ]);
+        })
+        .expect(200, done);
     });
   });
 
@@ -18,7 +33,37 @@ describe('GET /_schema/:schema', () => {
       request(routes)
         .get('/_schemas/functions/list')
         .expect('content-type', /json/)
-        .expect(200, schemas['functions/list'], done);
+        .expect((res) => {
+          const host = res.request.host;
+          expect(res.body.properties).to.be.eql(schemas['functions/list'].properties);
+          expect(res.body.links).to.be.eql([
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
+              method: 'PUT',
+              rel: 'update',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
+              method: 'DELETE',
+              rel: 'delete',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}/run`,
+              method: 'PUT',
+              rel: 'run',
+              schema: {
+                properties: {
+                  args: {
+                    title: 'Arguments',
+                    type: 'array',
+                  },
+                },
+                type: 'object',
+              },
+            },
+          ]);
+        })
+        .expect(200, done);
     });
   });
 
@@ -27,7 +72,37 @@ describe('GET /_schema/:schema', () => {
       request(routes)
         .get('/_schemas/functions/item')
         .expect('content-type', /json/)
-        .expect(200, schemas['functions/item'], done);
+        .expect((res) => {
+          const host = res.request.host;
+          expect(res.body.properties).to.be.eql(schemas['functions/item'].properties);
+          expect(res.body.links).to.be.eql([
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
+              method: 'PUT',
+              rel: 'update',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
+              method: 'DELETE',
+              rel: 'delete',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}/run`,
+              method: 'PUT',
+              rel: 'run',
+              schema: {
+                properties: {
+                  args: {
+                    title: 'Arguments',
+                    type: 'array',
+                  },
+                },
+                type: 'object',
+              },
+            },
+          ]);
+        })
+        .expect(200, done);
     });
   });
 
