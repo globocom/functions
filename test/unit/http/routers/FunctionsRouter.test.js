@@ -20,6 +20,16 @@ class FakeStorage extends Storage {
     this.lastPutCode = null;
   }
 
+  listNamespaces(start = 0, stop = 9) {
+    return new Promise((accept, reject) => {
+      accept({
+        namespace1: ['function1', 'function2'],
+        namespace2: ['function1', 'function2'],
+        namespace3: ['function1', 'function2'],
+      });
+    });
+  }
+
   getCode(namespace, id) {
     return new Promise((accept, reject) => {
       if (id === 'not-found') {
@@ -110,12 +120,20 @@ class FakeSandbox extends Sandbox {
 }
 
 describe('GET /functions', () => {
-  it('should return items', (done) => {
+  before(() => {
+    routes.set('memoryStorage', new FakeStorage());
+  });
+
+  it('should return namespaces with their functions', (done) => {
     request(routes)
       .get('/functions')
       .expect((res) => {
-        expect(res.body.items).to.be.eql([]);
-        expect(res.body.warning).to.be.eql('List is not implemented yet!');
+        expect(res.body.namespaces).to.have.property('namespace1');
+        expect(res.body.namespaces).to.have.property('namespace2');
+        expect(res.body.namespaces).to.have.property('namespace3');
+        expect(res.body.namespaces.namespace1[0]).to.be.eql('function1');
+        expect(res.body.namespaces.namespace2[0]).to.be.eql('function1');
+        expect(res.body.namespaces.namespace3[0]).to.be.eql('function1');
         expect(res.profile).to.endsWith('/_schemas/functions/list');
       })
       .expect(200, done);
