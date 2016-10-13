@@ -144,5 +144,30 @@ describe('FunctionRouter integration', () => {
           }, done);
       });
     });
+
+    describe('require arbitrary library inside function', () => {
+      before((done) => {
+        const code = `
+          const _ = require('lodash');
+          const people = [{name: 'John'}, {name: 'Doe'}];
+          function main(req, res) {
+            const names = _.map(people, 'name');
+            res.send({ names });
+          }
+        `;
+
+        request(routes)
+          .put('/functions/function-router-run/test4').send({ code })
+          .expect(200).expect('content-type', /json/, done);
+      });
+
+      it('should uses the arbitrary library properly', (done) => {
+        request(routes)
+          .put('/functions/function-router-run/test4/run')
+          .expect(200)
+          .expect('content-type', /json/)
+          .expect({ names: ['John', 'Doe']}, done);
+      });
+    });
   });
 });
