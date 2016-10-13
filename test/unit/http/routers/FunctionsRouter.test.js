@@ -1,5 +1,5 @@
 /* eslint class-methods-use-this: ['error', { "exceptMethods": [
-    'getCode', 'deleteCode', 'getCodeByCache', 'compileCode', 'runScript'
+    'listNamespaces', 'getCode', 'deleteCode', 'getCodeByCache', 'compileCode', 'runScript'
 ]}]*/
 
 const request = require('supertest');
@@ -20,8 +20,8 @@ class FakeStorage extends Storage {
     this.lastPutCode = null;
   }
 
-  listNamespaces(start = 0, stop = 9) {
-    return new Promise((accept, reject) => {
+  listNamespaces() {
+    return new Promise((accept) => {
       accept({
         namespace1: ['function1', 'function2'],
         namespace2: ['function1', 'function2'],

@@ -158,7 +158,8 @@ describe('FunctionRouter integration', () => {
 
         request(routes)
           .put('/functions/function-router-run/test4').send({ code })
-          .expect(200).expect('content-type', /json/, done);
+          .expect(200)
+          .expect('content-type', /json/, done);
       });
 
       it('should uses the arbitrary library properly', (done) => {
@@ -166,7 +167,7 @@ describe('FunctionRouter integration', () => {
           .put('/functions/function-router-run/test4/run')
           .expect(200)
           .expect('content-type', /json/)
-          .expect({ names: ['John', 'Doe']}, done);
+          .expect({ names: ['John', 'Doe'] }, done);
       });
     });
   });
