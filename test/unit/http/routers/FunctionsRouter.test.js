@@ -53,7 +53,7 @@ class FakeStorage extends Storage {
       } else if (id === 'error') {
         reject(new Error('Storage error'));
       } else {
-        accept(null);
+        accept([1, 1]);
       }
     });
   }

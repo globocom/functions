@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 const routes = require('../../../../../lib/http/routes');
 
 describe('FunctionRouter integration', () => {
-  describe.only('POST /functions/:namespace/:id', () => {
+  describe('POST /functions/:namespace/:id', () => {
     describe('when code is correct', () => {
       const code = `
         function main(req, res) {
