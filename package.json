@@ -4,7 +4,7 @@
   "description": "Remote serverless code executor",
   "main": "index.js",
   "scripts": {
-    "test": "istanbul cover _mocha --report lcovonly -- --recursive",
+    "test": "REDIS_KEY_PREFIX=test istanbul cover _mocha --report lcovonly -- --recursive",
     "send_cover": "istanbul-coveralls",
     "start_dev": "PORT=8100 nf -j Procfile.local start",
     "lint": "eslint lib test"
