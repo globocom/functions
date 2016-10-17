@@ -32,6 +32,13 @@ docker-compose up
 - Redis 3.0+
 - NodeJS 6.6.0
 
+### Download the project
+
+```bash
+git clone https://github.com/backstage/functions.git
+cd functions
+```
+
 ### Setup
 
 ```bash
