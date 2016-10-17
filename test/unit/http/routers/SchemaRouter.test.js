@@ -39,6 +39,11 @@ describe('GET /_schema/:schema', () => {
           expect(res.body.links).to.be.eql([
             {
               href: `http://${host}/functions/{namespace}/{id}`,
+              method: 'POST',
+              rel: 'create',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
               method: 'PUT',
               rel: 'update',
             },
@@ -61,6 +66,18 @@ describe('GET /_schema/:schema', () => {
                 type: 'object',
               },
             },
+            {
+              href: `http://${host}/functions/{namespace}/{id}?page={previousPage}&perPage={perPage}`,
+              rel: 'previous',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}?page={nextPage}&perPage={perPage}`,
+              rel: 'next',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}?page={page}&perPage={perPage}`,
+              rel: 'page',
+            },
           ]);
         })
         .expect(200, done);
@@ -76,6 +93,11 @@ describe('GET /_schema/:schema', () => {
           const host = res.request.host;
           expect(res.body.properties).to.be.eql(schemas['functions/item'].properties);
           expect(res.body.links).to.be.eql([
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
+              method: 'POST',
+              rel: 'create',
+            },
             {
               href: `http://${host}/functions/{namespace}/{id}`,
               method: 'PUT',
