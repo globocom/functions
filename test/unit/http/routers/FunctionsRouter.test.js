@@ -22,11 +22,11 @@ class FakeStorage extends Storage {
 
   listNamespaces() {
     return new Promise((accept) => {
-      accept({
-        namespace1: ['function1', 'function2'],
-        namespace2: ['function1', 'function2'],
-        namespace3: ['function1', 'function2'],
-      });
+      accept([
+        { namespace: 'namespace1', id: 'function' },
+        { namespace: 'namespace2', id: 'function' },
+        { namespace: 'namespace3', id: 'function' },
+      ]);
     });
   }
 
@@ -128,12 +128,12 @@ describe('GET /functions', () => {
     request(routes)
       .get('/functions')
       .expect((res) => {
-        expect(res.body.namespaces).to.have.property('namespace1');
-        expect(res.body.namespaces).to.have.property('namespace2');
-        expect(res.body.namespaces).to.have.property('namespace3');
-        expect(res.body.namespaces.namespace1[0]).to.be.eql('function1');
-        expect(res.body.namespaces.namespace2[0]).to.be.eql('function1');
-        expect(res.body.namespaces.namespace3[0]).to.be.eql('function1');
+        expect(res.body.items[0].namespace).to.be.eql('namespace1');
+        expect(res.body.items[0].id).to.be.eql('function');
+        expect(res.body.items[1].namespace).to.be.eql('namespace2');
+        expect(res.body.items[1].id).to.be.eql('function');
+        expect(res.body.items[2].namespace).to.be.eql('namespace3');
+        expect(res.body.items[2].id).to.be.eql('function');
         expect(res.profile).to.endsWith('/_schemas/functions/list');
       })
       .expect(200, done);
