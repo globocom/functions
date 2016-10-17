@@ -114,6 +114,18 @@ describe('GET /_schema/:schema', () => {
           expect(res.body.links).to.be.eql([
             {
               href: `http://${host}/functions/{namespace}/{id}`,
+              rel: 'self',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
+              rel: 'item',
+            },
+            {
+              href: `http://${host}/functions`,
+              rel: 'parent',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
               method: 'POST',
               rel: 'create',
             },
