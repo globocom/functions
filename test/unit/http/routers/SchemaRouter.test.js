@@ -35,7 +35,14 @@ describe('GET /_schema/:schema', () => {
         .expect('content-type', /json/)
         .expect((res) => {
           const host = res.request.host;
-          expect(res.body.properties).to.be.eql(schemas['functions/list'].properties);
+          expect(res.body.properties).to.be.eql({
+            items: {
+              items: {
+                $ref: `http://${host}/_schemas/functions/item`,
+              },
+              type: 'array',
+            },
+          });
           expect(res.body.links).to.be.eql([
             {
               href: `http://${host}/functions/{namespace}/{id}`,
