@@ -6,18 +6,39 @@
 
 Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Plataform able to store and execute JavaScript code.
 
-## Requirements
+## Run local via Docker
+### Requirements
+
+- Docker 1.12+
+- Docker compose 1.8+
+
+### Download docker-compose.yml
+
+```bash
+mkdir functions
+cd functions
+curl 'https://raw.githubusercontent.com/backstage/functions/master/docker-compose.yml' > docker-compose.yml
+```
+
+### Run
+
+```bash
+docker-compose up
+```
+
+## Run local without Docker
+### Requirements
 
 - Redis 3.0+
 - NodeJS 6.6.0
 
-## Setup
+### Setup
 
 ```bash
 make setup
 ```
 
-## Run local
+### Run
 
 ```bash
 make run
