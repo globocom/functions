@@ -41,6 +41,7 @@ describe('StorageRedis', () => {
         })
         .then((code2) => {
           expect(code2.id).to.be.eql('test');
+          expect(code2.namespace).to.be.eql('backstage');
           expect(code2.code).to.be.eql('a = 1;');
           expect(code2.hash).to.be.eql('123');
           done();
