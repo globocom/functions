@@ -22,11 +22,13 @@ class FakeStorage extends Storage {
 
   listNamespaces() {
     return new Promise((accept) => {
-      accept([
-        { namespace: 'namespace1', id: 'function' },
-        { namespace: 'namespace2', id: 'function' },
-        { namespace: 'namespace3', id: 'function' },
-      ]);
+      accept({
+        items: [
+          { namespace: 'namespace1', id: 'function' },
+          { namespace: 'namespace2', id: 'function' },
+          { namespace: 'namespace3', id: 'function' },
+        ],
+      });
     });
   }
 

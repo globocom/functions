@@ -86,15 +86,15 @@ describe('GET /_schema/:schema', () => {
               },
             },
             {
-              href: `http://${host}/functions/{namespace}/{id}?page={previousPage}&perPage={perPage}`,
+              href: `http://${host}/functions?page={previousPage}&perPage={perPage}`,
               rel: 'previous',
             },
             {
-              href: `http://${host}/functions/{namespace}/{id}?page={nextPage}&perPage={perPage}`,
+              href: `http://${host}/functions?page={nextPage}&perPage={perPage}`,
               rel: 'next',
             },
             {
-              href: `http://${host}/functions/{namespace}/{id}?page={page}&perPage={perPage}`,
+              href: `http://${host}/functions?page={page}&perPage={perPage}`,
               rel: 'page',
             },
           ]);
