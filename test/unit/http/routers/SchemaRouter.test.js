@@ -42,6 +42,18 @@ describe('GET /_schema/:schema', () => {
               },
               type: 'array',
             },
+            nextPage: {
+              type: 'integer',
+            },
+            page: {
+              type: 'integer',
+            },
+            perPage: {
+              type: 'integer',
+            },
+            previousPage: {
+              type: 'integer',
+            },
           });
           expect(res.body.links).to.be.eql([
             {
