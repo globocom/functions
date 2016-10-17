@@ -60,6 +60,9 @@ describe('GET /_schema/:schema', () => {
               href: `http://${host}/functions/{namespace}/{id}`,
               method: 'POST',
               rel: 'create',
+              schema: {
+                $ref: `http://${host}/_schemas/functions/item`,
+              },
             },
             {
               href: `http://${host}/functions/{namespace}/{id}`,
@@ -128,6 +131,9 @@ describe('GET /_schema/:schema', () => {
               href: `http://${host}/functions/{namespace}/{id}`,
               method: 'POST',
               rel: 'create',
+              schema: {
+                $ref: `http://${host}/_schemas/functions/item`,
+              },
             },
             {
               href: `http://${host}/functions/{namespace}/{id}`,
