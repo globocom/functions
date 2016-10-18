@@ -90,6 +90,10 @@ class FakeStorage extends Storage {
         accept(preCache({ code: '{result: \'compiled\'}' }));
       } else if (id === 'error') {
         reject(new Error('Storage error'));
+      } else if (id === 'customError') {
+        const err = new Error('Custom error');
+        err.statusCode = 422;
+        reject(err);
       } else if (id === 'not-found') {
         accept(null);
       } else {
@@ -433,7 +437,7 @@ describe('DELETE /functions/:namespace/:id', () => {
 });
 
 
-describe('PUT /functions/:namespace/:id', () => {
+describe('PUT /functions/:namespace/:id/run', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
     routes.set('sandbox', new FakeSandbox());
@@ -478,6 +482,17 @@ describe('PUT /functions/:namespace/:id', () => {
         .send({ args: [] })
         .expect(500, {
           error: 'Storage error',
+        }, done);
+    });
+  });
+
+  describe('when error with custom status code is found', () => {
+    it('should return a custom status code', (done) => {
+      request(routes)
+        .put('/functions/backstage/customError/run')
+        .send({ args: [] })
+        .expect(422, {
+          error: 'Custom error',
         }, done);
     });
   });
