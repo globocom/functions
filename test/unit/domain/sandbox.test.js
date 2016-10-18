@@ -107,7 +107,7 @@ describe('Sandbox', () => {
       });
     });
 
-    describe('when code has an error', () => {
+    describe('when code has an error in main function', () => {
       it('should resolve promise as rejected', (done) => {
         const namespace = 'backstage';
         const id = 'test';
@@ -122,6 +122,49 @@ describe('Sandbox', () => {
             done(new Error('It is expected an error'));
           }, (error) => {
             expect(error.message).to.be.eql('An error');
+            done();
+          });
+      });
+    });
+
+    describe('when code has an error in anonymous function', () => {
+      it('should resolve promise as rejected', (done) => {
+        const namespace = 'backstage';
+        const id = 'test';
+        const code = { code: `
+          function main(req, res) {
+            setTimeout(() => {
+              throw new Error('An error');
+            }, 10);
+          }
+        ` };
+        const script = testSandbox.compileCode(namespace, id, code);
+
+        testSandbox
+          .runScript('backstage', 'test', script, [])
+          .then(() => {
+            done(new Error('It is expected an error'));
+          }, (error) => {
+            expect(error.message).to.be.eql('An error');
+            done();
+          });
+      });
+    });
+    describe('when code has a timeout problem', () => {
+      it('should resolve promise as rejected', function timeoutTest(done) {
+        this.timeout(10000);
+
+        const namespace = 'backstage';
+        const id = 'test';
+        const code = { code: 'function main(req, res) {}' };
+        const script = testSandbox.compileCode(namespace, id, code);
+
+        testSandbox
+          .runScript('backstage', 'test', script, [])
+          .then(() => {
+            done(new Error('It is expected an error'));
+          }, (error) => {
+            expect(error.message).to.be.eql('Function timeout');
             done();
           });
       });
