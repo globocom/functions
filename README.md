@@ -30,7 +30,7 @@ docker-compose up
 ### Requirements
 
 - Redis 3.0+
-- NodeJS 6.6.0
+- NodeJS 6.9.1
 
 ### Download the project
 
