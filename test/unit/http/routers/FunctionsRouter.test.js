@@ -4,14 +4,13 @@
 
 const request = require('supertest');
 const chai = require('chai');
-const vm = require('vm');
-
 chai.use(require('chai-string'));
+
+const Sandbox = require('backstage-functions-sandbox');
 
 const expect = chai.expect;
 const routes = require('../../../../lib/http/routes');
 const Storage = require('../../../../lib/domain/storage');
-const Sandbox = require('../../../../lib/domain/sandbox').Sandbox;
 
 
 class FakeStorage extends Storage {
@@ -84,10 +83,17 @@ class FakeStorage extends Storage {
   getCodeByCache(namespace, id, { preCache }) {
     return new Promise((accept, reject) => {
       if (id === 'cached') {
-        const script = new vm.Script('{result: \'cached\'}');
+        const script = new Sandbox({}).compileCode('cached.js', `
+        function main(req, res) {
+            res.send({ result: 'cached', body: req.body })
+        }`);
         accept({ script });
       } else if (id === 'fresh') {
-        accept(preCache({ code: '{result: \'compiled\'}' }));
+        const code = `
+        function main(req, res) {
+            res.send({ result: 'fresh', body: req.body })
+        }`;
+        accept(preCache({ code }));
       } else if (id === 'error') {
         reject(new Error('Storage error'));
       } else if (id === 'customError') {
@@ -103,27 +109,6 @@ class FakeStorage extends Storage {
   }
 }
 
-
-class FakeSandbox extends Sandbox {
-  compileCode(namespace, codeId, code) {
-    return new vm.Script(code.code);
-  }
-
-  runScript(namespace, codeId, script, req) {
-    return new Promise((accept, reject) => {
-      try {
-        const args = req.body.args;
-        accept({
-          body: { args },
-          headers: { 'content-type': 'application/json' },
-          status: 200,
-        });
-      } catch (error) {
-        reject(error);
-      }
-    });
-  }
-}
 
 describe('GET /functions', () => {
   before(() => {
@@ -383,7 +368,6 @@ describe('PUT /functions/:namespace/:id', () => {
 describe('GET /functions/:namespace/:id', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
-    routes.set('sandbox', new FakeSandbox());
   });
 
   describe('when code is not found', () => {
@@ -440,7 +424,7 @@ describe('DELETE /functions/:namespace/:id', () => {
 describe('PUT /functions/:namespace/:id/run', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
-    routes.set('sandbox', new FakeSandbox());
+    routes.set('sandbox', new Sandbox({}));
   });
 
   describe('when code is found in cache', () => {
@@ -449,7 +433,8 @@ describe('PUT /functions/:namespace/:id/run', () => {
         .put('/functions/backstage/cached/run')
         .send({ args: [1, 2] })
         .expect(200, {
-          args: [1, 2],
+          result: 'cached',
+          body: { args: [1, 2] },
         }, done);
     });
   });
@@ -460,7 +445,8 @@ describe('PUT /functions/:namespace/:id/run', () => {
         .put('/functions/backstage/fresh/run')
         .send({ args: [3, 4] })
         .expect(200, {
-          args: [3, 4],
+          result: 'fresh',
+          body: { args: [3, 4] },
         }, done);
     });
   });
