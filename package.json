@@ -19,6 +19,9 @@
     "functions",
     "backstage"
   ],
+  "engines": {
+    "node": ">=6.9.1"
+  },
   "author": "Backstage Team <backstage@corp.globo.com>",
   "license": "MIT",
   "dependencies": {
