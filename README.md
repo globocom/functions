@@ -1,19 +1,50 @@
 [![Build Status](https://travis-ci.org/backstage/functions.png?branch=master)](https://travis-ci.org/backstage/functions)
 [![Coverage Status](https://coveralls.io/repos/github/backstage/functions/badge.svg?branch=master)](https://coveralls.io/github/backstage/functions?branch=master)
 
-
 # Backstage Functions
+Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Platform able to store and execute code.
 
-Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Plataform able to store and execute JavaScript code.
+## Benefits
+- Your code will be executed in an isolated environment  
+- You don't have to worry about infrastructure  
+- Functions can be called at any time by any project
 
-## Run local via Docker
+## FAQ
+- **Which languages are supported?**  
+Currently, only Javascript.
+
+- **Is it based on events?**  
+Not yet.
+
+- **How the code execution happens in an isolated way?**  
+It uses the [Backstage Functions Sandbox](https://github.com/backstage/functions-sandbox).
+
+## Running locally without Docker
 ### Requirements
+- Redis 3.0+
+- NodeJS 6.9.1
 
+### Download the project
+```bash
+git clone https://github.com/backstage/functions.git
+```
+
+### Setup
+```bash
+make setup
+```
+
+### Run
+```bash
+make run
+```
+
+## Running locally via Docker
+### Requirements
 - Docker 1.12+
 - Docker compose 1.8+
 
 ### Download docker-compose.yml
-
 ```bash
 mkdir functions
 cd functions
@@ -21,40 +52,16 @@ curl 'https://raw.githubusercontent.com/backstage/functions/master/docker-compos
 ```
 
 ### Run
-
 ```bash
 docker-compose up
 ```
 
-## Run local without Docker
-### Requirements
-
-- Redis 3.0+
-- NodeJS 6.9.1
-
-### Download the project
-
-```bash
-git clone https://github.com/backstage/functions.git
-cd functions
-```
-
-### Setup
-
-```bash
-make setup
-```
-
-### Run
-
-```bash
-make run
-```
-
 ## How to use
+### Creating a function
+Your function will have a file, which you define any name you want, and it has to have a function called `main`, with two parameters: `req` and `res`. Req represents the `Request` and Res represents the `Response`.  
+At the end of your code, you'll have to use the `send` method.
 
-### Create function
-
+#### Example of a function
 ```javascript
 function main(req, res) {
   const name = (req.body && req.body.name) || "World"
@@ -62,22 +69,40 @@ function main(req, res) {
 }
 ```
 
-Send the function as curl to `/functions/:namespace/:name`
-
+To store your function, you can make a `POST` request to `/functions/:namespace/:name`:  
 ```bash
-curl -i -XPUT http://localhost:8100/functions/example/hello-world \
+curl -i -X POST http://localhost:8100/functions/example/hello-world \
     -H 'content-type: application/json' \
     -d '{"code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}!` })\n}\n"}'
 ```
 
-Run the function send a `PUT` request to `/functions/:namespace/:name/run`:
+*ps: if already exists, it will not be updated*
 
+### Updating a function
+To update your function, you can make a `PUT` request to `/functions/:namespace/:name`:  
 ```bash
-curl -i -H 'content-type: application/json' -XPUT http://localhost:8100/functions/example/hello-world/run
+curl -i -X PUT http://localhost:8100/functions/example/hello-world \
+    -H 'content-type: application/json' \
+    -d '{"code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}! Nice meeting you...` })\n}\n"}'
 ```
 
-Results in something like:
+*ps: if it doesn't exists, it will be created*
 
+### Deleting a function
+To delete your function, you can make a `DELETE` request to `/functions/:namespace/:name`:  
+```bash
+curl -i -X DELETE http://localhost:8100/functions/example/hello-world \
+    -H 'content-type: application/json'
+```
+
+### Executing a function
+To execute a function, you can make a `PUT` request to `/functions/:namespace/:name/run`:  
+```bash
+curl -i -X PUT http://localhost:8100/functions/example/hello-world/run \
+    -H 'content-type: application/json'
+```
+
+The result will be something like:  
 ```bash
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
@@ -89,16 +114,14 @@ Connection: keep-alive
 {"say":"Hello World!"}
 ```
 
-If one pass an object at the request payload with name the payload is executed
-
+If one needs to pass an object in the request, the payload is executed:  
 ```bash
-curl -i -XPUT http://localhost:8100/functions/example/hello-world/run \
+curl -i -X PUT http://localhost:8100/functions/example/hello-world/run \
     -H 'content-type: application/json' \
     -d '{"name": "Pedro"}'
 ```
 
-Results in something like:
-
+The result will be something like:  
 ```bash
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
