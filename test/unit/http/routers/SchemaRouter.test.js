@@ -71,12 +71,6 @@ describe('GET /_schema/:schema', () => {
               method: 'PUT',
               rel: 'run',
               schema: {
-                properties: {
-                  args: {
-                    title: 'Arguments',
-                    type: 'array',
-                  },
-                },
                 type: 'object',
               },
             },
@@ -150,12 +144,6 @@ describe('GET /_schema/:schema', () => {
               method: 'PUT',
               rel: 'run',
               schema: {
-                properties: {
-                  args: {
-                    title: 'Arguments',
-                    type: 'array',
-                  },
-                },
                 type: 'object',
               },
             },

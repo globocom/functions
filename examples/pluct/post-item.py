@@ -3,9 +3,9 @@ import pluct
 functions = pluct.resource('http://localhost:8100').rel('functions')
 
 code = '''
-function main (x, callback) {
-    var result = x * 10;
-    callback(null, {marcos: result});
+function main (req, res) {
+    var result = req.body.x * req.body.y;
+    res.send({ result });
 };
 '''
 
@@ -17,13 +17,8 @@ result = functions.rel(
     'run',
     params={'id': 'my-code', 'namespace': 'backstage'},
     data={
-        'args': [
-            {
-                'resource': {
-                    'name': 'Marcos',
-                },
-            },
-        ]
-    }
+        'x': 10,
+        'y': 20,
+    },
 )
 print(result)
