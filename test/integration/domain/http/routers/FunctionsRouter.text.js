@@ -134,12 +134,11 @@ describe('FunctionRouter integration', () => {
       });
     });
 
-    describe('403 status code with text type', () => {
+    describe('500 status code', () => {
       before((done) => {
         const code = `
           function main(req, res) {
-            res.status(403);
-            res.send('Forbidden to acess resource');
+            res.internalServerError('My server is crashed');
           }
         `;
 
@@ -150,12 +149,35 @@ describe('FunctionRouter integration', () => {
           .expect('content-type', /json/, done);
       });
 
-      it('should returns the status 403 with text plain content', (done) => {
+      it('should returns the status 500 with text plain content', (done) => {
         request(routes)
           .put('/functions/function-router-run/test2/run')
-          .expect(403)
-          .expect('content-type', /text/)
-          .expect('Forbidden to acess resource', done);
+          .expect(500)
+          .expect('content-type', /json/)
+          .expect('{"error":"My server is crashed"}', done);
+      });
+    });
+
+    describe('304 status code', () => {
+      before((done) => {
+        const code = `
+          function main(req, res) {
+            res.notModified();
+          }
+        `;
+
+        request(routes)
+          .put('/functions/function-router-run/test2')
+          .send({ code })
+          .expect(200)
+          .expect('content-type', /json/, done);
+      });
+
+      it('should returns the status 500 with text plain content', (done) => {
+        request(routes)
+          .put('/functions/function-router-run/test2/run')
+          .expect(304)
+          .expect('', done);
       });
     });
 
