@@ -42,7 +42,18 @@ describe('ConfigDiscovery', () => {
     });
   });
 
-  describe.skip('#parseRedisOptions', () => {
-    it('should parse the default redis options');
+  describe('#parseRedisOptions', () => {
+    it('should parse the default redis options', () => {
+      const parsedOptions = ConfigDiscovery.parseRedisOptions();
+
+      expect(parsedOptions.password).to.be.eql('');
+      expect(parsedOptions.keyPrefix).to.be.eql('test');
+      expect(parsedOptions.heartBeatSeconds).to.be.eql(60);
+      expect(parsedOptions.sentinels).to.be.eql([
+        { host: '127.0.0.1', port: '16380' },
+        { host: '127.0.0.1', port: '16381' },
+        { host: '127.0.0.1', port: '16382' },
+      ]);
+    });
   });
 });
