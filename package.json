@@ -29,7 +29,7 @@
     "body-parser": "^1.15.2",
     "deepcopy": "^0.6.3",
     "express": "^4.14.0",
-    "backstage-functions-sandbox": "^0.1.3",
+    "backstage-functions-sandbox": "^0.1.4",
     "hiredis": "^0.5.0",
     "ioredis": "^2.3.0",
     "jsonschema": "^1.1.0",
