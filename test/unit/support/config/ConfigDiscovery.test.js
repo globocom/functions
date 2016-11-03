@@ -43,6 +43,21 @@ describe('ConfigDiscovery', () => {
   });
 
   describe('#parseRedisOptions', () => {
+    let oldRedisEndpoint;
+    let oldSentinelEndpoint;
+
+    before(() => {
+      oldRedisEndpoint = process.env.REDIS_ENDPOINT;
+      oldSentinelEndpoint = process.env.DBAAS_SENTINEL_ENDPOINT;
+      delete process.env.REDIS_ENDPOINT;
+      delete process.env.DBAAS_SENTINEL_ENDPOINT;
+    });
+
+    after(() => {
+      process.env.REDIS_ENDPOINT = oldRedisEndpoint;
+      process.env.DBAAS_SENTINEL_ENDPOINT = oldSentinelEndpoint;
+    });
+
     it('should parse the default redis options', () => {
       const parsedOptions = ConfigDiscovery.parseRedisOptions();
 
