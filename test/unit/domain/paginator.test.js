@@ -1,7 +1,7 @@
 const Paginator = require('../../../lib/domain/paginator');
 const expect = require('chai').expect;
 
-describe.only('Paginator', () => {
+describe('Paginator', () => {
   describe('when there are no items to paginate', () => {
     const paginator = new Paginator();
 
