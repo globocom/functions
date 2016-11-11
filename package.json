@@ -54,6 +54,7 @@
     "istanbul-coveralls": "^1.0.3",
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
+    "sinon": "^1.17.6",
     "supertest": "^2.0.0"
   }
 }
