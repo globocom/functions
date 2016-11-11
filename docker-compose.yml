@@ -1,12 +1,26 @@
- version: '2'
- services:
-   web:
-     image: globobackstage/functions
-     ports:
+version: '2'
+services:
+  web:
+    container_name: functions_app
+    image: globobackstage/functions
+    ports:
       - "8100:8100"
-     depends_on:
-      - redis
-     environment:
-       REDIS_ENDPOINT: redis://redis:6379/0
-   redis:
-     image: redis
+    networks:
+      - functions_net
+    depends_on:
+     - redis
+    environment:
+      REDIS_ENDPOINT: redis://redis:6379/0
+  redis:
+    container_name: functions_db
+    image: redis
+    volumes:
+      - functions_vol:/data
+    networks:
+      - functions_net
+
+volumes:
+  functions_vol:
+
+networks:
+  functions_net:
