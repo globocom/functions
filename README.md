@@ -5,18 +5,18 @@
 Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Platform able to store and execute code.
 
 ## Benefits
-- Your code will be executed in an isolated environment  
-- You don't have to worry about infrastructure  
+- Your code will be executed in an isolated environment
+- You don't have to worry about infrastructure
 - Functions can be called at any time by any project
 
 ## FAQ
-- **Which languages are supported?**  
+- **Which languages are supported?**
 Currently, only Javascript.
 
-- **Is it based on events?**  
+- **Is it based on events?**
 Not yet.
 
-- **How the code execution happens in an isolated way?**  
+- **How the code execution happens in an isolated way?**
 It uses the [Backstage Functions Sandbox](https://github.com/backstage/functions-sandbox).
 
 ## Running locally without Docker
@@ -58,7 +58,7 @@ docker-compose up
 
 ## How to use
 ### Creating a function
-Your function will have a file, which you define any name you want, and it has to have a function called `main`, with two parameters: `req` and `res`. Req represents the `Request` and Res represents the `Response`.  
+Your function will have a file, which you define any name you want, and it has to have a function called `main`, with two parameters: `req` and `res`. Req represents the `Request` and Res represents the `Response`.
 At the end of your code, you'll have to use the `send` method.
 
 #### Example of a function
@@ -69,7 +69,7 @@ function main(req, res) {
 }
 ```
 
-To store your function, you can make a `POST` request to `/functions/:namespace/:name`:  
+To store your function, you can make a `POST` request to `/functions/:namespace/:name`:
 ```bash
 curl -i -X POST http://localhost:8100/functions/example/hello-world \
     -H 'content-type: application/json' \
@@ -79,7 +79,7 @@ curl -i -X POST http://localhost:8100/functions/example/hello-world \
 *ps: if already exists, it will not be updated*
 
 ### Updating a function
-To update your function, you can make a `PUT` request to `/functions/:namespace/:name`:  
+To update your function, you can make a `PUT` request to `/functions/:namespace/:name`:
 ```bash
 curl -i -X PUT http://localhost:8100/functions/example/hello-world \
     -H 'content-type: application/json' \
@@ -89,20 +89,20 @@ curl -i -X PUT http://localhost:8100/functions/example/hello-world \
 *ps: if it doesn't exists, it will be created*
 
 ### Deleting a function
-To delete your function, you can make a `DELETE` request to `/functions/:namespace/:name`:  
+To delete your function, you can make a `DELETE` request to `/functions/:namespace/:name`:
 ```bash
 curl -i -X DELETE http://localhost:8100/functions/example/hello-world \
     -H 'content-type: application/json'
 ```
 
 ### Executing a function
-To execute a function, you can make a `PUT` request to `/functions/:namespace/:name/run`:  
+To execute a function, you can make a `PUT` request to `/functions/:namespace/:name/run`:
 ```bash
 curl -i -X PUT http://localhost:8100/functions/example/hello-world/run \
     -H 'content-type: application/json'
 ```
 
-The result will be something like:  
+The result will be something like:
 ```bash
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
@@ -114,14 +114,14 @@ Connection: keep-alive
 {"say":"Hello World!"}
 ```
 
-If one needs to pass an object in the request, the payload is executed:  
+If one needs to pass an object in the request, the payload is executed:
 ```bash
 curl -i -X PUT http://localhost:8100/functions/example/hello-world/run \
     -H 'content-type: application/json' \
     -d '{"name": "Pedro"}'
 ```
 
-The result will be something like:  
+The result will be something like:
 ```bash
 HTTP/1.1 200 OK
 Content-Type: application/json; charset=utf-8
