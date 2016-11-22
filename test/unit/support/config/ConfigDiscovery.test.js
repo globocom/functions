@@ -63,7 +63,9 @@ describe('ConfigDiscovery', () => {
 
       expect(parsedOptions.password).to.be.eql('');
       expect(parsedOptions.keyPrefix).to.be.eql('test');
-      expect(parsedOptions.heartBeatSeconds).to.be.eql(60);
+      expect(parsedOptions.heartBeatSeconds).to.be.eql(5);
+      expect(parsedOptions.heartBeatTimeout).to.be.eql(5);
+      expect(parsedOptions.heartBeatStanch).to.be.eql(2);
       expect(parsedOptions.sentinels).to.be.eql([
         { host: '127.0.0.1', port: '16380' },
         { host: '127.0.0.1', port: '16381' },

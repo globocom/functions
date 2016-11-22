@@ -1,5 +1,7 @@
 const expect = require('chai').expect;
 const deepcopy = require('deepcopy');
+const sinon = require('sinon');
+const EventEmitter = require('events');
 
 const StorageRedis = require('../../../../lib/domain/storage/redis');
 const config = require('../../../../lib/support/config');
@@ -11,6 +13,8 @@ describe('StorageRedis', () => {
     const newOptions = deepcopy(config.redis);
     newOptions.enableOfflineQueue = true;
     newOptions.keyPrefix = 'test:';
+    newOptions.heartBeatTimeout = 0.001;
+    newOptions.heartBeatStanch = 0.001;
 
     storage = new StorageRedis(newOptions);
   });
@@ -232,6 +236,44 @@ describe('StorageRedis', () => {
           }, (err) => {
             done(err);
           });
+      });
+    });
+  });
+
+
+  describe('#checkConnectionLeak()', () => {
+    let sandbox;
+    let fakeWorker;
+
+    class FakeWorker extends EventEmitter {
+      kill() {
+        this.killed = true;
+        this.emit('kill');
+      }
+
+      disconnect() {
+        this.disconnected = true;
+        this.emit('disconnect');
+      }
+    }
+
+    before(() => {
+      sandbox = sinon.sandbox.create();
+      fakeWorker = new FakeWorker();
+      sandbox.stub(storage, 'worker', fakeWorker);
+      sandbox.stub(storage, 'ping', () => new Promise(() => {}));
+    });
+
+    after(() => {
+      sandbox.restore();
+    });
+
+    it('should disconnect and kill worker after a connection leak', (done) => {
+      storage.checkConnectionLeak();
+      fakeWorker.on('kill', () => {
+        expect(fakeWorker.killed).to.be.eql(true);
+        expect(fakeWorker.disconnected).to.be.eql(true);
+        done();
       });
     });
   });
