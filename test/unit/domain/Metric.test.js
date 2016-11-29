@@ -41,7 +41,7 @@ describe('Metric', () => {
 
   it('should send metric by udp', (done) => {
     const metric = new Metric('test-metric');
-    metric.finish({
+    const spent = metric.finish({
       test: 'testing',
     });
 
@@ -50,6 +50,7 @@ describe('Metric', () => {
       expect(data.client).to.be.eql('functions-test');
       expect(data.metric).to.be.eql('test-metric');
       expect(data.time).to.be.below(5);
+      expect(spent).to.be.below(5);
       expect(data.test).to.be.eql('testing');
       done();
     };

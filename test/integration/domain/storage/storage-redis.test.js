@@ -240,6 +240,99 @@ describe('StorageRedis', () => {
     });
   });
 
+  describe('getCodesByCache', () => {
+    const preCache = (code) => {
+      code.preCached = true;
+      code.preCachedByHash = code.hash;
+      return code;
+    };
+
+    let code1;
+    let code2;
+
+    beforeEach(() => {
+      code1 = {
+        namespace: 'backstage',
+        id: 'code1',
+        code: 'c = 1;',
+        hash: '123a',
+      };
+
+      code2 = {
+        namespace: 'backstage',
+        id: 'code2',
+        code: 'c = 1;',
+        hash: '123b',
+      };
+    });
+
+    describe('when all codes are not found', () => {
+      it('should return null for each code', (done) => {
+        code1.id = 'not-found1';
+        code2.id = 'not-found2';
+
+        storage.getCodesByCache([code1, code2], { preCache })
+          .then((result) => {
+            expect(result).to.be.eql([null, null]);
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+
+    describe('when all codes are found', () => {
+      it('should return all codes', (done) => {
+        Promise
+          .all([
+            storage.putCode(code1.namespace, code1.id, code1),
+            storage.putCode(code2.namespace, code2.id, code2),
+          ])
+          .then(([putResponse1, putResponse2]) => {
+            expect(putResponse1).to.be.eql('OK');
+            expect(putResponse2).to.be.eql('OK');
+            return storage.getCodesByCache([code1, code2], { preCache });
+          })
+          .then(([result1, result2]) => {
+            expect(result1.preCached).to.be.true;
+            expect(result2.preCached).to.be.true;
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+
+    describe('when some code are updated', () => {
+      it('should return all codes', (done) => {
+        Promise
+          .all([
+            storage.putCode(code1.namespace, code1.id, code1),
+            storage.putCode(code2.namespace, code2.id, code2),
+          ])
+          .then(([putResponse1, putResponse2]) => {
+            expect(putResponse1).to.be.eql('OK');
+            expect(putResponse2).to.be.eql('OK');
+
+            return storage.getCodesByCache([code1, code2], { preCache });
+          })
+          .then(([result1, result2]) => {
+            expect(result1.preCached).to.be.true;
+            expect(result2.preCached).to.be.true;
+            code2.hash = '321b';
+            return storage.putCode(code2.namespace, code2.id, code2);
+          })
+          .then((putResponse) => {
+            expect(putResponse).to.be.eql('OK');
+            return storage.getCodesByCache([code1, code2], { preCache });
+          })
+          .then(([result1, result2]) => {
+            expect(result1.preCachedByHash).to.be.eql('123a');
+            expect(result2.preCachedByHash).to.be.eql('321b');
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+  });
 
   describe('#checkConnectionLeak()', () => {
     let sandbox;
