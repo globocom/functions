@@ -1,7 +1,3 @@
-/* eslint class-methods-use-this: ['error', { "exceptMethods": [
-    'listNamespaces', 'getCode', 'deleteCode', 'getCodeByCache', 'compileCode', 'runScript'
-]}]*/
-
 const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-string'));
@@ -10,104 +6,7 @@ const Sandbox = require('backstage-functions-sandbox');
 
 const expect = chai.expect;
 const routes = require('../../../../lib/http/routes');
-const Storage = require('../../../../lib/domain/storage');
-
-
-class FakeStorage extends Storage {
-  constructor() {
-    super();
-    this.lastPutCode = null;
-  }
-
-  listNamespaces() {
-    return new Promise((accept) => {
-      accept({
-        items: [
-          { namespace: 'namespace1', id: 'function' },
-          { namespace: 'namespace2', id: 'function' },
-          { namespace: 'namespace3', id: 'function' },
-        ],
-      });
-    });
-  }
-
-  getCode(namespace, id) {
-    return new Promise((accept, reject) => {
-      if (id === 'not-found') {
-        accept(null);
-      } else if (id === 'error') {
-        reject(new Error('Failed to get code'));
-      } else {
-        accept({
-          hash: 'my-hash-123',
-          code: 'function main() {}',
-        });
-      }
-    });
-  }
-
-  postCode(namespace, id, code) {
-    this.lastPutCode = code;
-    return new Promise((accept, reject) => {
-      if (id === 'exists') {
-        reject(new Error('Code already exists'));
-      } else if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else {
-        accept([1, 1]);
-      }
-    });
-  }
-
-  putCode(namespace, id, code) {
-    this.lastPutCode = code;
-    return new Promise((accept, reject) => {
-      if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else {
-        accept(null);
-      }
-    });
-  }
-
-  deleteCode(namespace, id) {
-    return new Promise((accept, reject) => {
-      if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else {
-        accept(null);
-      }
-    });
-  }
-
-  getCodeByCache(namespace, id, { preCache }) {
-    return new Promise((accept, reject) => {
-      if (id === 'cached') {
-        const script = new Sandbox({}).compileCode('cached.js', `
-        function main(req, res) {
-            res.send({ result: 'cached', body: req.body })
-        }`);
-        accept({ script });
-      } else if (id === 'fresh') {
-        const code = `
-        function main(req, res) {
-            res.send({ result: 'fresh', body: req.body })
-        }`;
-        accept(preCache({ code }));
-      } else if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else if (id === 'customError') {
-        const err = new Error('Custom error');
-        err.statusCode = 422;
-        reject(err);
-      } else if (id === 'not-found') {
-        accept(null);
-      } else {
-        reject(new Error('Unexpected id'));
-      }
-    });
-  }
-}
+const FakeStorage = require('../../../fakes/FakeStorage');
 
 
 describe('GET /functions', () => {
@@ -480,6 +379,43 @@ describe('PUT /functions/:namespace/:id/run', () => {
         .expect(422, {
           error: 'Custom error',
         }, done);
+    });
+  });
+});
+
+
+describe('PUT /functions/pipeline', () => {
+  before(() => {
+    routes.set('memoryStorage', new FakeStorage());
+    routes.set('sandbox', new Sandbox({}));
+  });
+
+  describe('when there are no steps', () => {
+    it('should return a bad request', (done) => {
+      request(routes)
+        .put('/functions/pipeline')
+        .expect(400, {
+          error: 'Pass step by querystring is required',
+        }, done);
+    });
+  });
+
+  describe('when step does not exists', () => {
+    it('should return a not found request', (done) => {
+      request(routes)
+        .put('/functions/pipeline?step[0]=backstage/not-found')
+        .expect(404, {
+          error: 'Code \'backstage/not-found\' is not found',
+        }, done);
+    });
+  });
+
+  describe('when step use two steps', () => {
+    it('should return a result', (done) => {
+      request(routes)
+        .put('/functions/pipeline?step[0]=backstage/step1&step[1]=backstage/step2')
+        .send({ x: 1 })
+        .expect(200, { x: 200 }, done);
     });
   });
 });
