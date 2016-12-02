@@ -132,3 +132,37 @@ Connection: keep-alive
 
 {"say":"Hello Pedro!"}
 ```
+
+### Executing functions in a pipeline
+
+To execute many functions in a pipeline, you can make a `PUT` request to `/functions/pipeline`:
+```
+curl -g -i -X PUT 'http://localhost:8100/functions/pipeline?steps[0]=namespace/function0&steps[1]=namespace/function1' \
+    -H 'content-type: application/json'
+    -d '{"x": 1}'
+```
+
+Considering the functions below, and the curl above, the pipeline result would be like this:
+```javascript
+// Function0
+function main(req, res) {\
+  res.send({x: req.body.x * 10});
+
+}
+
+// Function1
+function main(req, res) {
+  res.send({x: req.body.x * 20});
+}
+```
+
+```bash
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 22
+ETag: W/"16-Ino2/umXaZ3xVEhoqyS8aA"
+Date: Tue, 11 Oct 2016 17:13:11 GMT
+Connection: keep-alive
+
+{"x": 200}
+```
