@@ -14,6 +14,7 @@ describe('Pipeline', () => {
     let step304;
     let step200b;
     let step404;
+    let stepCrash;
 
     beforeEach(() => {
       req = {
@@ -55,6 +56,15 @@ describe('Pipeline', () => {
         script: sandbox.compileCode('200.js', `
                    function main(req, res) {
                        res.notFound('Not found an item');
+                   }
+              `),
+      };
+      stepCrash = {
+        namespace: 'backstage',
+        id: 'stepCrash',
+        script: sandbox.compileCode('crash.js', `
+                   function main(req, res) {
+                       res.undefinedMethod();
                    }
               `),
       };
@@ -142,6 +152,19 @@ describe('Pipeline', () => {
           expect(result.body.namespace).to.be.eql('backstage');
           expect(result.body.functionId).to.be.eql('step404');
           expect(result.status).to.be.eql(404);
+          done();
+        })
+        .catch(err => done(err));
+    });
+
+    it('should fail if the first function fail', (done) => {
+      new Pipeline(sandbox, req, [step200, stepCrash])
+        .run()
+        .then(() => {
+          done(new Error('Not failed'));
+        })
+        .catch((err) => {
+          expect(err.message).to.be.eql('res.undefinedMethod is not a function');
           done();
         })
         .catch(err => done(err));
