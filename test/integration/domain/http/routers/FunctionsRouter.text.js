@@ -109,6 +109,32 @@ describe('FunctionRouter integration', () => {
     });
   });
 
+  describe('GET /functions/:namespace/:id/run', () => {
+    describe('simple run with json body', () => {
+      before((done) => {
+        const code = `
+          function main(req, res) {
+            res.send({ hey: req.method });
+          }
+        `;
+
+        request(routes)
+          .put('/functions/function-router-run/test2')
+          .send({ code })
+          .expect(200)
+          .expect('content-type', /json/, done);
+      });
+
+      it('should runs the code and return properlly', (done) => {
+        request(routes)
+          .get('/functions/function-router-run/test2/run')
+          .expect(200)
+          .expect('content-type', /json/)
+          .expect({ hey: 'GET' }, done);
+      });
+    });
+  });
+
   describe('PUT /functions/:namespace/:id/run', () => {
     describe('simple run with json body', () => {
       before((done) => {
