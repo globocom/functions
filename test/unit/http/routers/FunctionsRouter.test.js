@@ -338,6 +338,16 @@ describe('PUT /functions/:namespace/:id/run', () => {
     });
   });
 
+  describe('when code is found in cache', () => {
+    it('should reuse compiled code from storage cache', (done) => {
+      request(routes)
+        .put('/functions/backstage/send-string/run')
+        .send({ args: [1, 2] })
+        .expect('content-type', /json/)
+        .expect(200, '"this is an alert"', done);
+    });
+  });
+
   describe('when code is not found in cache', () => {
     it('should compile code from storage', (done) => {
       request(routes)
