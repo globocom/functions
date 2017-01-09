@@ -9,6 +9,8 @@ class FakeStorage extends Storage {
   constructor() {
     super();
     this.lastPutCode = null;
+    this.lastEnvSet = null;
+    this.lastEnvUnset = null;
   }
 
   listNamespaces() {
@@ -121,6 +123,34 @@ class FakeStorage extends Storage {
   getCodesByCache(codes, { preCache }) {
     const promises = codes.map(c => this.getCodeByCache(c.namespace, c.id, { preCache }));
     return Promise.all(promises);
+  }
+
+  putCodeEnviromentVariable(namespace, id, env, value) {
+    return this.getCode(namespace, id)
+      .then((code) => {
+        if (!code) {
+          const err = new Error('Function not found');
+          err.statusCode = 404;
+          throw err;
+        }
+
+        this.lastEnvSet = { namespace, id, env, value };
+        return null;
+      });
+  }
+
+  deleteCodeEnviromentVariable(namespace, id, env) {
+    return this.getCode(namespace, id)
+      .then((code) => {
+        if (!code) {
+          const err = new Error('Function not found');
+          err.statusCode = 404;
+          throw err;
+        }
+
+        this.lastEnvUnset = { namespace, id, env };
+        return null;
+      });
   }
 }
 

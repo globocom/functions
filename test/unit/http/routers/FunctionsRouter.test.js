@@ -429,3 +429,88 @@ describe('PUT /functions/pipeline', () => {
     });
   });
 });
+
+
+describe('PUT /functions/:namespace/:id/env/:env', () => {
+  before(() => {
+    routes.set('memoryStorage', new FakeStorage());
+  });
+
+  describe('when pass a json string on body', () => {
+    it('should create an enviroment variable', (done) => {
+      request(routes)
+        .put('/functions/backstage/correct/env/MY_VAR')
+        .set('content-type', 'application/json')
+        .send('"MY VALUE"')
+        .expect(() => {
+          const memoryStorage = routes.get('memoryStorage');
+          expect(memoryStorage.lastEnvSet).to.be.eql({
+            namespace: 'backstage',
+            id: 'correct',
+            env: 'MY_VAR',
+            value: 'MY VALUE',
+          });
+        })
+        .expect(204, done);
+    });
+  });
+
+  describe('when the target function it\'s not exist', () => {
+    it('should fail the request with 404 error', (done) => {
+      request(routes)
+        .put('/functions/backstage/not-found/env/MY_VAR')
+        .set('content-type', 'application/json')
+        .send('"MY VALUE"')
+        .expect(404, {
+          error: 'Function not found',
+        }, done);
+    });
+  });
+
+  describe('when not pass a json string on body', () => {
+    it('should validate', (done) => {
+      request(routes)
+        .put('/functions/backstage/correct/env/MY_VAR')
+        .send('wrong string')
+        .expect('Content-Type', /json/)
+        .expect(400, {
+          error: 'Invalid instance',
+          details: [
+            'instance is not of a type(s) string',
+          ],
+        }, done);
+    });
+  });
+});
+
+describe('DELETE /functions/:namespace/:id/env/:env', () => {
+  before(() => {
+    routes.set('memoryStorage', new FakeStorage());
+  });
+
+  describe('when sucessfully', () => {
+    it('should delete an enviroment variable', (done) => {
+      request(routes)
+        .delete('/functions/backstage/correct/env/MY_VAR')
+        .expect(() => {
+          const memoryStorage = routes.get('memoryStorage');
+          expect(memoryStorage.lastEnvUnset).to.be.eql({
+            namespace: 'backstage',
+            id: 'correct',
+            env: 'MY_VAR',
+          });
+        })
+        .expect(204, {}, done);
+    });
+  });
+
+  describe('when the target function it\'s not exist', () => {
+    it('should fail the request with 404 error', (done) => {
+      request(routes)
+        .delete('/functions/backstage/not-found/env/MY_VAR')
+        .expect(404, {
+          error: 'Function not found',
+        }, done);
+    });
+  });
+});
