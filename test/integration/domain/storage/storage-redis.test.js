@@ -37,6 +37,10 @@ describe('StorageRedis', () => {
         id: 'test',
         code: 'a = 1;',
         hash: '123',
+        env: {
+          CLIENT_ID: 'my client id',
+          MY_VAR: 'my var',
+        },
       };
       storage.putCode('backstage', 'test', code)
         .then((x) => {
@@ -48,10 +52,11 @@ describe('StorageRedis', () => {
           expect(code2.namespace).to.be.eql('backstage');
           expect(code2.code).to.be.eql('a = 1;');
           expect(code2.hash).to.be.eql('123');
+          expect(code2.env.CLIENT_ID).to.be.eql('my client id');
+          expect(code2.env.MY_VAR).to.be.eql('my var');
           done();
-        }, (err) => {
-          done(err);
-        });
+        })
+        .catch(err => done(err));
     });
   });
 
