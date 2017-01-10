@@ -6,6 +6,8 @@ const EventEmitter = require('events');
 const StorageRedis = require('../../../../lib/domain/storage/redis');
 const config = require('../../../../lib/support/config');
 
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
 describe('StorageRedis', () => {
   let storage;
 
@@ -52,6 +54,7 @@ describe('StorageRedis', () => {
           expect(code2.namespace).to.be.eql('backstage');
           expect(code2.code).to.be.eql('a = 1;');
           expect(code2.hash).to.be.eql('123');
+          expect(code2.versionID).to.match(UUID_REGEX);
           expect(code2.env.CLIENT_ID).to.be.eql('my client id');
           expect(code2.env.MY_VAR).to.be.eql('my var');
           done();
@@ -119,9 +122,8 @@ describe('StorageRedis', () => {
           .then((cacheResponse) => {
             expect(cacheResponse).to.be.null;
             done();
-          }, (err) => {
-            done(err);
-          });
+          })
+          .catch(err => done(err));
       });
     });
 
@@ -151,9 +153,8 @@ describe('StorageRedis', () => {
             expect(cacheResponse.preCached).to.be.true;
             expect(preCache.called).to.be.true;
             done();
-          }, (err) => {
-            done(err);
-          });
+          })
+          .catch(err => done(err));
       });
     });
 
@@ -172,6 +173,7 @@ describe('StorageRedis', () => {
           code: 'b = 1;',
           hash: '123a',
         };
+        let lastVersionID;
 
         storage
           .putCode(namespace, id, code)
@@ -182,17 +184,19 @@ describe('StorageRedis', () => {
           .then((cacheResponse) => {
             expect(cacheResponse.preCached).to.be.true;
             preCache.called = false;
+            lastVersionID = cacheResponse.versionID;
             return storage.getCodeByCache(namespace, id, { preCache });
           })
           .then((cacheResponse) => {
             expect(cacheResponse.id).to.be.eql(id);
             expect(cacheResponse.code).to.be.eql('b = 1;');
             expect(cacheResponse.hash).to.be.eql('123a');
+            expect(cacheResponse.versionID).to.match(UUID_REGEX);
+            expect(cacheResponse.versionID).to.be.eql(lastVersionID);
             expect(preCache.called).to.be.false;
             done();
-          }, (err) => {
-            done(err);
-          });
+          })
+          .catch(err => done(err));
       });
     });
 
@@ -211,6 +215,7 @@ describe('StorageRedis', () => {
           code: 'c = 1;',
           hash: '123a',
         };
+        let lastVersionID;
 
         storage
           .putCode(namespace, id, code)
@@ -225,6 +230,7 @@ describe('StorageRedis', () => {
             // change item in database
             code.code = 'd = 2;';
             code.hash = '123b';
+            lastVersionID = cacheResponse.versionID;
             return storage.putCode(namespace, id, code);
           })
           .then(() => {
@@ -236,11 +242,12 @@ describe('StorageRedis', () => {
             expect(cacheResponse.code).to.be.eql('d = 2;');
             expect(cacheResponse.preCachedByHash).to.be.eql('123b');
             expect(cacheResponse.hash).to.be.eql('123b');
+            expect(cacheResponse.versionID).to.match(UUID_REGEX);
+            expect(cacheResponse.versionID).to.be.not.eql(lastVersionID);
             expect(preCache.called).to.be.true;
             done();
-          }, (err) => {
-            done(err);
-          });
+          })
+          .catch(err => done(err));
       });
     });
   });
@@ -248,7 +255,7 @@ describe('StorageRedis', () => {
   describe('getCodesByCache', () => {
     const preCache = (code) => {
       code.preCached = true;
-      code.preCachedByHash = code.hash;
+      code.preCachedByVersionID = code.versionID;
       return code;
     };
 
@@ -308,6 +315,9 @@ describe('StorageRedis', () => {
 
     describe('when some code are updated', () => {
       it('should return all codes', (done) => {
+        let code1VersionID;
+        let code2VersionID;
+
         Promise
           .all([
             storage.putCode(code1.namespace, code1.id, code1),
@@ -316,13 +326,20 @@ describe('StorageRedis', () => {
           .then(([putResponse1, putResponse2]) => {
             expect(putResponse1).to.be.eql('OK');
             expect(putResponse2).to.be.eql('OK');
-
+            return Promise.all([
+              storage.getCode(code1.namespace, code1.id),
+              storage.getCode(code2.namespace, code2.id),
+            ]);
+          })
+          .then(([savedCode1, savedCode2]) => {
+            code1VersionID = savedCode1.versionID;
+            code2VersionID = savedCode2.versionID;
             return storage.getCodesByCache([code1, code2], { preCache });
           })
           .then(([result1, result2]) => {
             expect(result1.preCached).to.be.true;
             expect(result2.preCached).to.be.true;
-            code2.hash = '321b';
+            code2.code = 'console.info("changed");';
             return storage.putCode(code2.namespace, code2.id, code2);
           })
           .then((putResponse) => {
@@ -330,8 +347,8 @@ describe('StorageRedis', () => {
             return storage.getCodesByCache([code1, code2], { preCache });
           })
           .then(([result1, result2]) => {
-            expect(result1.preCachedByHash).to.be.eql('123a');
-            expect(result2.preCachedByHash).to.be.eql('321b');
+            expect(result1.preCachedByVersionID).to.be.eql(code1VersionID);
+            expect(result2.preCachedByVersionID).to.be.not.eql(code2VersionID);
             done();
           })
           .catch(err => done(err));
