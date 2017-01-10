@@ -339,6 +339,132 @@ describe('StorageRedis', () => {
     });
   });
 
+  describe('#putCodeEnviromentVariable', () => {
+    describe('when target function is found', () => {
+      it('should set enviroment variable', (done) => {
+        const varName = 'MY_SKIP';
+        const code = {
+          namespace: 'backstage',
+          id: 'test-env',
+          code: 'a = 1;',
+          hash: '123',
+        };
+        storage.putCode(code.namespace, code.id, code)
+          .then((x) => {
+            expect(x).to.be.eql('OK');
+            return storage.putCodeEnviromentVariable(code.namespace, code.id, varName, 'true');
+          })
+          .then(() => storage.getCode(code.namespace, code.id))
+          .then(({ env, code: source }) => {
+            expect(source).to.be.eql(code.code);
+            expect(env).to.be.eql({
+              MY_SKIP: 'true',
+            });
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+
+    describe('when target function is not found', () => {
+      it('should raise an error', (done) => {
+        storage.putCodeEnviromentVariable('backstage', 'test-env-not-found', 'MY_SKIP', 'true')
+          .then(() => {
+            done(new Error('Not raised an expection'));
+          })
+          .catch((err) => {
+            expect(err.message).to.be.eql('Function not found');
+            expect(err.statusCode).to.be.eql(404);
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+  });
+
+  describe('#deleteCodeEnviromentVariable', () => {
+    describe('when target function and target enviroment var is found', () => {
+      it('should unset enviroment variable', (done) => {
+        const varName = 'TO_BE_DELETE';
+        const code = {
+          namespace: 'backstage',
+          id: 'test-env-unset',
+          code: 'a = 1;',
+          hash: '123',
+          env: {},
+        };
+        code.env[varName] = 'me';
+
+        storage.putCode(code.namespace, code.id, code)
+          .then((x) => {
+            expect(x).to.be.eql('OK');
+            return storage.deleteCodeEnviromentVariable(code.namespace, code.id, varName);
+          })
+          .then(() => storage.getCode(code.namespace, code.id))
+          .then(({ env, code: source }) => {
+            expect(source).to.be.eql(code.code);
+            expect(env).to.be.eql({});
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+
+    describe('when target enviroment var is not found', () => {
+      it('should unset enviroment variable', (done) => {
+        const varName = 'TO_BE_DELETE';
+        const code = {
+          namespace: 'backstage',
+          id: 'test-env-unset',
+          code: 'a = 1;',
+          hash: '123',
+          env: {
+            TO_MAINTAIN: 'true',
+          },
+        };
+
+        storage.putCode(code.namespace, code.id, code)
+          .then((x) => {
+            expect(x).to.be.eql('OK');
+            return storage.deleteCodeEnviromentVariable(code.namespace, code.id, varName);
+          })
+          .then(() => done(new Error('Not raised an expection')))
+          .catch((err) => {
+            expect(err.message).to.be.eql('Env variable not found');
+            expect(err.statusCode).to.be.eql(404);
+          })
+          .then(() => storage.getCode(code.namespace, code.id))
+          .then(({ env, code: source }) => {
+            expect(source).to.be.eql(code.code);
+            expect(env).to.be.eql({
+              TO_MAINTAIN: 'true',
+            });
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+
+    describe('when function is not found', () => {
+      it('should unset enviroment variable', (done) => {
+        const varName = 'TO_BE_DELETE';
+        const code = {
+          namespace: 'backstage',
+          id: 'test-env-not-found',
+        };
+
+        storage.deleteCodeEnviromentVariable(code.namespace, code.id, varName)
+          .then(() => done(new Error('Not raised an expection')))
+          .catch((err) => {
+            expect(err.message).to.be.eql('Function not found');
+            expect(err.statusCode).to.be.eql(404);
+            done();
+          })
+          .catch(err => done(err));
+      });
+    });
+  });
+
   describe('#checkConnectionLeak()', () => {
     let sandbox;
     let fakeWorker;
