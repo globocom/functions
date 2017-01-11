@@ -77,7 +77,7 @@ describe('GET /_schema/:schema', () => {
             {
               href: `http://${host}/functions/{namespace}/{id}/env/{envVar}`,
               method: 'PUT',
-              rel: 'set-env',
+              rel: 'env-set',
               schema: {
                 title: 'Value',
                 type: 'string',
@@ -86,7 +86,7 @@ describe('GET /_schema/:schema', () => {
             {
               href: `http://${host}/functions/{namespace}/{id}/env/{envVar}`,
               method: 'DELETE',
-              rel: 'unset-env',
+              rel: 'env-unset',
             },
             {
               href: `http://${host}/functions/{namespace}/{id}`,
@@ -164,7 +164,7 @@ describe('GET /_schema/:schema', () => {
             {
               href: `http://${host}/functions/{namespace}/{id}/env/{envVar}`,
               method: 'PUT',
-              rel: 'set-env',
+              rel: 'env-set',
               schema: {
                 title: 'Value',
                 type: 'string',
@@ -173,7 +173,7 @@ describe('GET /_schema/:schema', () => {
             {
               href: `http://${host}/functions/{namespace}/{id}/env/{envVar}`,
               method: 'DELETE',
-              rel: 'unset-env',
+              rel: 'env-unset',
             },
           ]);
         })
