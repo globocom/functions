@@ -11,6 +11,7 @@ describe('Pipeline', () => {
     let req;
     let sandbox;
     let step200;
+    let step200env;
     let step304;
     let step200b;
     let step404;
@@ -40,6 +41,19 @@ describe('Pipeline', () => {
                        res.send(req.body);
                    }
               `),
+      };
+      step200env = {
+        namespace: 'backstage',
+        id: 'step200env',
+        script: sandbox.compileCode('200b.js', `
+                   function main(req, res) {
+                       req.body.env = Object.assign({}, Backstage.env);
+                       res.send(req.body);
+                   }
+              `),
+        env: {
+          STEP_VAR: 'foo',
+        },
       };
       step304 = {
         namespace: 'backstage',
@@ -96,6 +110,18 @@ describe('Pipeline', () => {
         .then((result) => {
           expect(result.body.ok).to.be.eql(true);
           expect(result.body.ok2).to.be.eql(true);
+          expect(result.status).to.be.eql(200);
+          done();
+        })
+        .catch(err => done(err));
+    });
+    it('should be able to run three functions', (done) => {
+      new Pipeline(sandbox, req, [step200, step200b, step200env])
+        .run()
+        .then((result) => {
+          expect(result.body.ok).to.be.eql(true);
+          expect(result.body.ok2).to.be.eql(true);
+          expect(result.body.env.STEP_VAR).to.be.eql('foo');
           expect(result.status).to.be.eql(200);
           done();
         })
