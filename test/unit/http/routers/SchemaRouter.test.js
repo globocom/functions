@@ -58,6 +58,10 @@ describe('GET /_schema/:schema', () => {
           expect(res.body.links).to.be.eql([
             {
               href: `http://${host}/functions/{namespace}/{id}`,
+              rel: 'item',
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
               method: 'PUT',
               rel: 'update',
             },
@@ -128,10 +132,6 @@ describe('GET /_schema/:schema', () => {
               rel: 'self',
             },
             {
-              href: `http://${host}/functions/{namespace}/{id}`,
-              rel: 'item',
-            },
-            {
               href: `http://${host}/functions`,
               rel: 'parent',
             },
@@ -142,6 +142,10 @@ describe('GET /_schema/:schema', () => {
               schema: {
                 $ref: `http://${host}/_schemas/functions/item`,
               },
+            },
+            {
+              href: `http://${host}/functions/{namespace}/{id}`,
+              rel: 'item',
             },
             {
               href: `http://${host}/functions/{namespace}/{id}`,
