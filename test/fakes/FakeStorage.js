@@ -85,9 +85,10 @@ class FakeStorage extends Storage {
       } else if (id === 'fresh') {
         const code = `
         function main(req, res) {
-            res.send({ result: 'fresh', body: req.body })
+            res.send({ result: 'fresh', body: req.body, env: Backstage.env })
         }`;
-        accept(preCache({ code }));
+        const env = { MY_FOO: 'bar' };
+        accept(preCache({ code, env }));
       } else if (id === 'send-string') {
         const code = `
         function main(req, res) {

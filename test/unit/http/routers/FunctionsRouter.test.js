@@ -356,6 +356,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
         .expect(200, {
           result: 'fresh',
           body: { args: [3, 4] },
+          env: { MY_FOO: 'bar' },
         }, done);
     });
   });
