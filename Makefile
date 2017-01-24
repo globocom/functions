@@ -28,7 +28,7 @@ install_node:
 	if test -d ~/.nodenv ; then \
 		echo "Nodenv is already installed"; \
 	else \
-		setup_nvm \
+		$(MAKE) setup_nvm; \
 		bash -c "source ~/.nvm/nvm.sh && nvm install 6.9.1 && nvm use 6.9.1"; \
 		@echo "Add these lines to your bash_profile, bashrc ..."; \
 		@echo "	source ~/.nvm/nvm.sh"; \
