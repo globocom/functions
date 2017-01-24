@@ -25,18 +25,19 @@ setup_upgrade: clean
 	npm shrinkwrap
 
 install_node:
-	if test -d ~/.nodenv ; then \
+	@if test -d ~/.nodenv; then \
 		echo "Nodenv is already installed"; \
+		bash -c "nodenv global 6.9.1"; \
 	else \
-		$(MAKE) setup_nvm; \
+		make setup_nvm; \
 		bash -c "source ~/.nvm/nvm.sh && nvm install 6.9.1 && nvm use 6.9.1"; \
-		@echo "Add these lines to your bash_profile, bashrc ..."; \
-		@echo "	source ~/.nvm/nvm.sh"; \
-		@echo "	[[ -r $NVM_DIR/bash_completion ]] && . $NVM_DIR/bash_completion"; \
+		echo "Add these lines to your bash_profile, bashrc ..."; \
+		echo "	source ~/.nvm/nvm.sh"; \
+		echo "	[[ -r $NVM_DIR/bash_completion ]] && . $NVM_DIR/bash_completion"; \
 	fi
 
 setup_nvm:
-	if test -d ~/.nvm ; then \
+	@if [ test -d ~/.nvm ]; then \
 		echo "Nvm is already installed"; \
 	else \
 		curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash; \
