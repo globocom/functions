@@ -22,7 +22,7 @@ It uses the [Backstage Functions Sandbox](https://github.com/backstage/functions
 ## Running locally without Docker
 ### Requirements
 - Redis 3.0+
-- NodeJS 6.9.4
+- NodeJS 6.9.5
 
 ### Download the project
 ```bash

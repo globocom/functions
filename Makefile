@@ -27,10 +27,10 @@ setup_upgrade: clean
 install_node:
 	@if test -d ~/.nodenv; then \
 		echo "Nodenv is already installed"; \
-		bash -c "nodenv global 6.9.4"; \
+		bash -c "nodenv global 6.9.5"; \
 	else \
 		make setup_nvm; \
-		bash -c "source ~/.nvm/nvm.sh && nvm install 6.9.4 && nvm use 6.9.4"; \
+		bash -c "source ~/.nvm/nvm.sh && nvm install 6.9.5 && nvm use 6.9.5"; \
 		echo "Add these lines to your bash_profile, bashrc ..."; \
 		echo "	source ~/.nvm/nvm.sh"; \
 		echo "	[[ -r $NVM_DIR/bash_completion ]] && . $NVM_DIR/bash_completion"; \
