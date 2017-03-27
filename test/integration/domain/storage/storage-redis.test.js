@@ -2,6 +2,7 @@ const expect = require('chai').expect;
 const deepcopy = require('deepcopy');
 const sinon = require('sinon');
 const EventEmitter = require('events');
+const uuidV4 = require('uuid/v4');
 
 const StorageRedis = require('../../../../lib/domain/storage/redis');
 const config = require('../../../../lib/support/config');
@@ -57,6 +58,24 @@ describe('StorageRedis', () => {
           expect(code2.versionID).to.match(UUID_REGEX);
           expect(code2.env.CLIENT_ID).to.be.eql('my client id');
           expect(code2.env.MY_VAR).to.be.eql('my var');
+          done();
+        })
+        .catch(err => done(err));
+    });
+
+    it('should have a created equal updated for new function', (done) => {
+      const code = {
+        id: uuidV4(),
+        code: 'a = 2;',
+        hash: '123',
+      };
+      storage.putCode('backstage', code.id, code)
+        .then((x) => {
+          expect(x).to.be.eql('OK');
+          return storage.getCode('backstage', code.id);
+        })
+        .then((code2) => {
+          expect(code2.created).to.be.eql(code2.updated);
           done();
         })
         .catch(err => done(err));
