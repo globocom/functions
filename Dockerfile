@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:6.9.5
+FROM mhart/alpine-node:6.10.2
 
 RUN apk add --no-cache make gcc g++ python
 WORKDIR /application/functions
