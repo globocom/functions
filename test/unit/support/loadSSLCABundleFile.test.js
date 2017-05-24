@@ -31,5 +31,12 @@ describe('CA bundle file Loader', () => {
     loadCertFile();
     expect(https.globalAgent.options.ca).to.have.lengthOf(0);
   });
+
+  it('should not load CA bundle with flag false', () => {
+    process.env.FUNCTIONS_USE_SSL_CERT_FILE = 'false';
+    process.env.SSL_CERT_FILE = path.join(__dirname, 'cacert.pem');
+    loadCertFile();
+    expect(https.globalAgent.options.ca).to.have.lengthOf(0);
+  });
 });
 
