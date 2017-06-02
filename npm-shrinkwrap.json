@@ -53,9 +53,9 @@
       "resolved": "https://registry.npmjs.org/aws4/-/aws4-1.5.0.tgz"
     },
     "backstage-functions-sandbox": {
-      "version": "0.2.2",
-      "from": "backstage-functions-sandbox@0.2.2",
-      "resolved": "https://registry.npmjs.org/backstage-functions-sandbox/-/backstage-functions-sandbox-0.2.2.tgz"
+      "version": "0.2.4",
+      "from": "backstage-functions-sandbox@0.2.4",
+      "resolved": "https://registry.npmjs.org/backstage-functions-sandbox/-/backstage-functions-sandbox-0.2.4.tgz"
     },
     "basic-auth": {
       "version": "1.0.4",
@@ -275,6 +275,18 @@
       "version": "0.3.0",
       "from": "fresh@0.3.0",
       "resolved": "https://registry.npmjs.org/fresh/-/fresh-0.3.0.tgz"
+    },
+    "gelf-pro": {
+      "version": "1.1.0",
+      "from": "gelf-pro@latest",
+      "resolved": "https://registry.npmjs.org/gelf-pro/-/gelf-pro-1.1.0.tgz",
+      "dependencies": {
+        "async": {
+          "version": "2.0.1",
+          "from": "async@~2.0",
+          "resolved": "https://registry.npmjs.org/async/-/async-2.0.1.tgz"
+        }
+      }
     },
     "generate-function": {
       "version": "2.0.0",

@@ -32,6 +32,20 @@ describe('ConfigDiscovery', () => {
     });
   });
 
+  describe('#getObject', () => {
+    before(() => {
+      process.env.DEFINED_GET_OBJECT = '{"test": 123}';
+    });
+
+    it('should returns the default object when env is not default', () => {
+      expect(ConfigDiscovery.getObject('NOT_DEFINED')).to.be.eql({});
+    });
+
+    it('should returns the defined env', () => {
+      expect(ConfigDiscovery.getObject('DEFINED_GET_OBJECT')).to.be.eql({ test: 123 });
+    });
+  });
+
   describe('#getPossibleString', () => {
     it('should returns the default value when no env is match', () => {
       const possibleString = ConfigDiscovery.getPossibleString(
