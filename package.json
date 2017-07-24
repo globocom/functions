@@ -26,7 +26,7 @@
   "license": "MIT",
   "dependencies": {
     "async": "^2.0.1",
-    "backstage-functions-sandbox": "^0.2.4",
+    "backstage-functions-sandbox": "^0.2.5",
     "body-parser": "^1.15.2",
     "deepcopy": "^0.6.3",
     "express": "^4.14.0",
