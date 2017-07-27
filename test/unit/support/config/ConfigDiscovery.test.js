@@ -16,6 +16,20 @@ describe('ConfigDiscovery', () => {
     });
   });
 
+  describe('#getBool', () => {
+    before(() => {
+      process.env.DEFINED_GET_BOOL = 'true';
+    });
+
+    it('should returns the default value when env is not defined', () => {
+      expect(ConfigDiscovery.getBool('NOT_DEFINED', false)).to.be.false;
+    });
+
+    it('should returns the defined env', () => {
+      expect(ConfigDiscovery.getBool('DEFINED_GET_BOOL', false)).to.be.true;
+    });
+  });
+
   describe('#getList', () => {
     before(() => {
       process.env.DEFINED_GET_LIST = 'leftpad,  underscore  ,react';
