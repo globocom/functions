@@ -40,17 +40,20 @@ describe('Metric', () => {
   });
 
   it('should send metric by udp', (done) => {
+    let spent;
     const metric = new Metric('test-metric');
-    const spent = metric.finish({
-      test: 'testing',
-    });
+    setTimeout(() => {
+      spent = metric.finish({
+        test: 'testing',
+      });
+    }, 100);
 
     onMessage = (msg) => {
       const data = JSON.parse(msg);
       expect(data.client).to.be.eql('functions-test');
       expect(data.metric).to.be.eql('test-metric');
-      expect(data.time).to.be.below(5);
-      expect(spent).to.be.below(5);
+      expect(data.time).to.be.below(120); // time in milleseconds
+      expect(spent).to.be.below(1); // time in seconds
       expect(data.test).to.be.eql('testing');
       done();
     };
