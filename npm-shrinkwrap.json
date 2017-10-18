@@ -49,7 +49,7 @@
     },
     "backstage-functions-sandbox": {
       "version": "0.2.6",
-      "from": "https://registry.npmjs.org/backstage-functions-sandbox/-/backstage-functions-sandbox-0.2.6.tgz",
+      "from": "backstage-functions-sandbox@>=0.2.6 <0.3.0",
       "resolved": "https://registry.npmjs.org/backstage-functions-sandbox/-/backstage-functions-sandbox-0.2.6.tgz"
     },
     "basic-auth": {
