@@ -9,31 +9,25 @@ describe('Status', () => {
     const status2 = new Status(new NotWorkingStorage());
     const properties = ['name', 'status', 'message', 'time'];
 
-    it('should contain mandatory properties on response', (done) => {
-      status1.run().then((output1) => {
-        expect(output1).to.include.keys(properties);
-        return status2.run();
-      }).catch((output2) => {
-        expect(output2).to.include.keys(properties);
-        done();
-      });
+    it('should contain mandatory properties on response', async () => {
+      const output1 = await status1.run();
+      const output2 = await status2.run();
+
+      expect(output1).to.include.keys(properties);
+      expect(output2).to.include.keys(properties);
     });
 
     describe('when service is up', () => {
-      it('should show WORKING status', (done) => {
-        status1.run().then((output) => {
-          expect(output.status).to.eq('WORKING');
-          done();
-        });
+      it('should show WORKING status', async () => {
+        const output = await status1.run();
+        expect(output.status).to.eq('WORKING');
       });
     });
 
     describe('when service is down', () => {
-      it('should show FAILED status', (done) => {
-        status2.run().catch((output) => {
-          expect(output.status).to.eq('FAILED');
-          done();
-        });
+      it('should show FAILED status', async () => {
+        const output = await status2.run();
+        expect(output.status).to.eq('FAILED');
       });
     });
   });

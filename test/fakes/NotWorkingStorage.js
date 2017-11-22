@@ -7,10 +7,8 @@ class NotWorkingStorage extends Storage {
     super(name);
   }
 
-  ping() {
-    return new Promise((accept, reject) => {
-      reject(new Error('Not working'));
-    });
+  async ping() {
+    throw new Error('Not working');
   }
 }
 
