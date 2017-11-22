@@ -84,116 +84,73 @@ describe('Pipeline', () => {
       };
     });
 
-    it('should be able to run unique function', (done) => {
-      new Pipeline(sandbox, req, [step200])
-        .run()
-        .then((result) => {
-          expect(result.body.ok).to.be.eql(true);
-          expect(result.status).to.be.eql(200);
-          done();
-        })
-        .catch(err => done(err));
-    });
-    it('should be able to run unique function with 304', (done) => {
-      new Pipeline(sandbox, req, [step304])
-        .run()
-        .then((result) => {
-          expect(result.status).to.be.eql(304);
-          expect(result.body).to.be.eql(null);
-          done();
-        })
-        .catch(err => done(err));
-    });
-    it('should be able to run two functions', (done) => {
-      new Pipeline(sandbox, req, [step200, step200b])
-        .run()
-        .then((result) => {
-          expect(result.body.ok).to.be.eql(true);
-          expect(result.body.ok2).to.be.eql(true);
-          expect(result.status).to.be.eql(200);
-          done();
-        })
-        .catch(err => done(err));
-    });
-    it('should be able to run three functions', (done) => {
-      new Pipeline(sandbox, req, [step200, step200b, step200env])
-        .run()
-        .then((result) => {
-          expect(result.body.ok).to.be.eql(true);
-          expect(result.body.ok2).to.be.eql(true);
-          expect(result.body.env.STEP_VAR).to.be.eql('foo');
-          expect(result.status).to.be.eql(200);
-          done();
-        })
-        .catch(err => done(err));
-    });
-    it('should be able to run two functions, one with 304', (done) => {
-      new Pipeline(sandbox, req, [step200, step304])
-        .run()
-        .then((result) => {
-          expect(result.body.ok).to.be.eql(true);
-          expect(result.status).to.be.eql(200);
-          done();
-        })
-        .catch(err => done(err));
-    });
-    it('should be able to run three functions, two with 304', (done) => {
-      new Pipeline(sandbox, req, [step200, step304, step304])
-        .run()
-        .then((result) => {
-          expect(result.body.ok).to.be.eql(true);
-          expect(result.status).to.be.eql(200);
-          done();
-        })
-        .catch(err => done(err));
-    });
-    it('should be able to run three functions, one with 304', (done) => {
-      new Pipeline(sandbox, req, [step200, step304, step200b])
-        .run()
-        .then((result) => {
-          expect(result.body.ok).to.be.eql(true);
-          expect(result.body.ok2).to.be.eql(true);
-          expect(result.status).to.be.eql(200);
-          done();
-        })
-        .catch(err => done(err));
+    it('should be able to run unique function', async () => {
+      const result = await new Pipeline(sandbox, req, [step200]).run();
+      expect(result.body.ok).to.be.eql(true);
+      expect(result.status).to.be.eql(200);
     });
 
-    it('should be able to run one function with 404', (done) => {
-      new Pipeline(sandbox, req, [step404])
-        .run()
-        .then((result) => {
-          expect(result.body.error).to.be.eql('Not found an item');
-          expect(result.status).to.be.eql(404);
-          done();
-        })
-        .catch(err => done(err));
+    it('should be able to run unique function with 304', async () => {
+      const result = await new Pipeline(sandbox, req, [step304]).run();
+      expect(result.status).to.be.eql(304);
+      expect(result.body).to.be.eql(null);
     });
 
-    it('should be able to run three functions with 404', (done) => {
-      new Pipeline(sandbox, req, [step200, step404, step200b])
-        .run()
-        .then((result) => {
-          expect(result.body.error).to.be.eql('Not found an item');
-          expect(result.body.namespace).to.be.eql('backstage');
-          expect(result.body.functionId).to.be.eql('step404');
-          expect(result.status).to.be.eql(404);
-          done();
-        })
-        .catch(err => done(err));
+    it('should be able to run two functions', async () => {
+      const result = await new Pipeline(sandbox, req, [step200, step200b]).run();
+      expect(result.body.ok).to.be.eql(true);
+      expect(result.body.ok2).to.be.eql(true);
+      expect(result.status).to.be.eql(200);
     });
 
-    it('should fail if the first function fail', (done) => {
-      new Pipeline(sandbox, req, [step200, stepCrash])
-        .run()
-        .then(() => {
-          done(new Error('Not failed'));
-        })
-        .catch((err) => {
-          expect(err.message).to.be.eql('res.undefinedMethod is not a function');
-          done();
-        })
-        .catch(err => done(err));
+    it('should be able to run three functions', async () => {
+      const result = await new Pipeline(sandbox, req, [step200, step200b, step200env]).run();
+      expect(result.body.ok).to.be.eql(true);
+      expect(result.body.ok2).to.be.eql(true);
+      expect(result.body.env.STEP_VAR).to.be.eql('foo');
+      expect(result.status).to.be.eql(200);
+    });
+
+    it('should be able to run two functions, one with 304', async () => {
+      const result = await new Pipeline(sandbox, req, [step200, step304]).run();
+      expect(result.body.ok).to.be.eql(true);
+      expect(result.status).to.be.eql(200);
+    });
+
+    it('should be able to run three functions, two with 304', async () => {
+      const result = await new Pipeline(sandbox, req, [step200, step304, step304]).run();
+      expect(result.body.ok).to.be.eql(true);
+      expect(result.status).to.be.eql(200);
+    });
+
+    it('should be able to run three functions, one with 304', async () => {
+      const result = await new Pipeline(sandbox, req, [step200, step304, step200b]).run();
+      expect(result.body.ok).to.be.eql(true);
+      expect(result.body.ok2).to.be.eql(true);
+      expect(result.status).to.be.eql(200);
+    });
+
+    it('should be able to run one function with 404', async () => {
+      const result = await new Pipeline(sandbox, req, [step404]).run();
+      expect(result.body.error).to.be.eql('Not found an item');
+      expect(result.status).to.be.eql(404);
+    });
+
+    it('should be able to run three functions with 404', async () => {
+      const result = await new Pipeline(sandbox, req, [step200, step404, step200b]).run();
+      expect(result.body.error).to.be.eql('Not found an item');
+      expect(result.body.namespace).to.be.eql('backstage');
+      expect(result.body.functionId).to.be.eql('step404');
+      expect(result.status).to.be.eql(404);
+    });
+
+    it('should fail if the first function fail', async () => {
+      try {
+        await new Pipeline(sandbox, req, [step200, stepCrash]).run();
+        throw new Error('Not failed');
+      } catch (err) {
+        expect(err.message).to.be.eql('res.undefinedMethod is not a function');
+      }
     });
   });
 });
