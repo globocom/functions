@@ -1,5 +1,8 @@
 .PHONY: run setup test setup_upgrade install_node setup_nvm lint clean
 
+DESIRED_NODE_VERSION = v$(shell cat .node-version)
+CURRENT_NODE_VERSION = $(shell node --version)
+
 help:
 	@echo '    setup .................... sets up project dependencies'
 	@echo '    run ...................... runs project'
@@ -25,16 +28,22 @@ setup_upgrade: clean
 	npm shrinkwrap
 
 install_node:
+ifeq (${DESIRED_NODE_VERSION},${CURRENT_NODE_VERSION})
+	@echo "You are using desired node version: ${DESIRED_NODE_VERSION}"
+
+else
+	@echo "You are not using the desired node version: ${DESIRED_NODE_VERSION}, your version: ${CURRENT_NODE_VERSION}"
 	@if test -d ~/.nodenv; then \
 		echo "Nodenv is already installed"; \
-		bash -c "nodenv global 6.11.1"; \
+		bash -c "nodenv global ${DESIRED_NODE_VERSION}"; \
 	else \
 		make setup_nvm; \
-		bash -c "source ~/.nvm/nvm.sh && nvm install 6.11.1 && nvm use 6.11.1"; \
+		bash -c "source ~/.nvm/nvm.sh && nvm install ${DESIRED_NODE_VERSION} && nvm use ${DESIRED_NODE_VERSION}"; \
 		echo "Add these lines to your bash_profile, bashrc ..."; \
 		echo "	source ~/.nvm/nvm.sh"; \
 		echo "	[[ -r $NVM_DIR/bash_completion ]] && . $NVM_DIR/bash_completion"; \
 	fi
+endif
 
 setup_nvm:
 	@if [ test -d ~/.nvm ]; then \
