@@ -13,112 +13,98 @@ class FakeStorage extends Storage {
     this.lastEnvUnset = null;
   }
 
-  listNamespaces() {
-    return new Promise((accept) => {
-      accept({
-        items: [
-          { namespace: 'namespace1', id: 'function' },
-          { namespace: 'namespace2', id: 'function' },
-          { namespace: 'namespace3', id: 'function' },
-        ],
-      });
-    });
+  async listNamespaces() {
+    return {
+      items: [
+        { namespace: 'namespace1', id: 'function' },
+        { namespace: 'namespace2', id: 'function' },
+        { namespace: 'namespace3', id: 'function' },
+      ],
+    };
   }
 
-  getCode(namespace, id) {
-    return new Promise((accept, reject) => {
-      if (id === 'not-found') {
-        accept(null);
-      } else if (id === 'error') {
-        reject(new Error('Failed to get code'));
-      } else {
-        accept({
-          hash: 'my-hash-123',
-          code: 'function main() {}',
-        });
-      }
-    });
+  async getCode(namespace, id) {
+    if (id === 'not-found') {
+      return null;
+    } else if (id === 'error') {
+      throw new Error('Failed to get code');
+    }
+    return {
+      hash: 'my-hash-123',
+      code: 'function main() {}',
+    };
   }
 
-  postCode(namespace, id, code) {
+  async postCode(namespace, id, code) {
     this.lastPutCode = code;
-    return new Promise((accept, reject) => {
-      if (id === 'exists') {
-        reject(new Error('Code already exists'));
-      } else if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else {
-        accept([1, 1]);
-      }
-    });
+
+    if (id === 'exists') {
+      throw new Error('Code already exists');
+    } else if (id === 'error') {
+      throw new Error('Storage error');
+    }
+
+    return [1, 1];
   }
 
-  putCode(namespace, id, code) {
+  async putCode(namespace, id, code) {
     this.lastPutCode = code;
-    return new Promise((accept, reject) => {
-      if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else {
-        accept(null);
-      }
-    });
+    if (id === 'error') {
+      throw new Error('Storage error');
+    }
+
+    return null;
   }
 
-  deleteCode(namespace, id) {
-    return new Promise((accept, reject) => {
-      if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else {
-        accept(null);
-      }
-    });
+  async deleteCode(namespace, id) {
+    if (id === 'error') {
+      throw new Error('Storage error');
+    }
+    return null;
   }
 
-  getCodeByCache(namespace, id, { preCache }) {
-    return new Promise((accept, reject) => {
-      if (id === 'cached') {
-        const script = new Sandbox({}).compileCode('cached.js', `
+  async getCodeByCache(namespace, id, { preCache }) {
+    if (id === 'cached') {
+      const script = new Sandbox({}).compileCode('cached.js', `
         function main(req, res) {
             res.send({ result: 'cached', body: req.body })
         }`);
-        accept({ script });
-      } else if (id === 'fresh') {
-        const code = `
+      return ({ script });
+    } else if (id === 'fresh') {
+      const code = `
         function main(req, res) {
             res.send({ result: 'fresh', body: req.body, env: Backstage.env })
         }`;
-        const env = { MY_FOO: 'bar' };
-        accept(preCache({ code, env }));
-      } else if (id === 'send-string') {
-        const code = `
+      const env = { MY_FOO: 'bar' };
+      return preCache({ code, env });
+    } else if (id === 'send-string') {
+      const code = `
         function main(req, res) {
             res.send('this is an alert');
         }`;
-        accept(preCache({ code }));
-      } else if (id === 'step1') {
-        const code = `
+      return preCache({ code });
+    } else if (id === 'step1') {
+      const code = `
         function main(req, res) {
             res.send({ x: req.body.x * 10 })
         }`;
-        accept(preCache({ code }));
-      } else if (id === 'step2') {
-        const code = `
+      return preCache({ code });
+    } else if (id === 'step2') {
+      const code = `
         function main(req, res) {
             res.send({ x: req.body.x * 20 })
         }`;
-        accept(preCache({ code }));
-      } else if (id === 'error') {
-        reject(new Error('Storage error'));
-      } else if (id === 'customError') {
-        const err = new Error('Custom error');
-        err.statusCode = 422;
-        reject(err);
-      } else if (id === 'not-found') {
-        accept(null);
-      } else {
-        reject(new Error('Unexpected id'));
-      }
-    });
+      return preCache({ code });
+    } else if (id === 'error') {
+      throw new Error('Storage error');
+    } else if (id === 'customError') {
+      const err = new Error('Custom error');
+      err.statusCode = 422;
+      throw err;
+    } else if (id === 'not-found') {
+      return null;
+    }
+    throw new Error('Unexpected id');
   }
 
   getCodesByCache(codes, { preCache }) {
@@ -126,32 +112,28 @@ class FakeStorage extends Storage {
     return Promise.all(promises);
   }
 
-  putCodeEnviromentVariable(namespace, id, env, value) {
-    return this.getCode(namespace, id)
-      .then((code) => {
-        if (!code) {
-          const err = new Error('Function not found');
-          err.statusCode = 404;
-          throw err;
-        }
+  async putCodeEnviromentVariable(namespace, id, env, value) {
+    const code = await this.getCode(namespace, id);
+    if (!code) {
+      const err = new Error('Function not found');
+      err.statusCode = 404;
+      throw err;
+    }
 
-        this.lastEnvSet = { namespace, id, env, value };
-        return null;
-      });
+    this.lastEnvSet = { namespace, id, env, value };
+    return null;
   }
 
-  deleteCodeEnviromentVariable(namespace, id, env) {
-    return this.getCode(namespace, id)
-      .then((code) => {
-        if (!code) {
-          const err = new Error('Function not found');
-          err.statusCode = 404;
-          throw err;
-        }
+  async deleteCodeEnviromentVariable(namespace, id, env) {
+    const code = await this.getCode(namespace, id);
+    if (!code) {
+      const err = new Error('Function not found');
+      err.statusCode = 404;
+      throw err;
+    }
 
-        this.lastEnvUnset = { namespace, id, env };
-        return null;
-      });
+    this.lastEnvUnset = { namespace, id, env };
+    return null;
   }
 }
 

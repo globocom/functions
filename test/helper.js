@@ -4,13 +4,16 @@ const deleteKeys = require('../lib/support/deleteKeys');
 global.assert = require('assert');
 
 before((done) => {
-  const memoryStorage = new RedisStorage(null, () => {
+  const memoryStorage = new RedisStorage(null, async () => {
     const keys = [
       'code',
       'namespaces',
     ];
-    const promises = deleteKeys(keys, memoryStorage);
-
-    return Promise.all(promises).then(() => done());
+    try {
+      await deleteKeys(keys, memoryStorage);
+      done();
+    } catch (err) {
+      done(err);
+    }
   });
 });
