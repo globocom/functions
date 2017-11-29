@@ -3,7 +3,7 @@ const expect = require('chai').expect;
 const Pipeline = require('../../../lib/domain/Pipeline');
 
 
-const Sandbox = require('backstage-functions-sandbox');
+const Sandbox = require('@globocom/backstage-functions-sandbox');
 
 
 describe('Pipeline', () => {
