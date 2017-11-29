@@ -422,6 +422,45 @@ describe('StorageRedis', () => {
     });
   });
 
+  describe('#getNamespace', () => {
+    describe('when namespace it is not exist', () => {
+      it('should return null', async () => {
+        const result = await storage.getNamespace('not-found');
+        expect(result).to.be.null;
+      });
+    });
+
+    describe('when namespace exists', () => {
+      it('should return related namespace', async () => {
+        await storage.putNamespace('will-found', {
+          namespace: 'will-found',
+          sentryDSN: 'http://my-sentry.io/foo',
+        });
+
+        const { namespace, sentryDSN } = await storage.getNamespace('will-found');
+        expect(sentryDSN).to.be.eql('http://my-sentry.io/foo');
+        expect(namespace).to.be.eql('will-found');
+      });
+    });
+  });
+
+  describe('#deleteNamespace', () => {
+    it('should remove namespace', async () => {
+      await storage.putNamespace('will-delete', {
+        namespace: 'will-delete',
+        sentryDSN: 'http://my-sentry.io/foo',
+      });
+
+      const { namespace } = await storage.getNamespace('will-delete');
+      expect(namespace).to.be.eql('will-delete');
+
+      await storage.deleteNamespace(namespace);
+
+      const result = await storage.getNamespace('will-delete');
+      expect(result).to.be.null;
+    });
+  });
+
   describe('#checkConnectionLeak()', () => {
     let sandbox;
     let fakeWorker;
