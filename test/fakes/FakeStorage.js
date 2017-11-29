@@ -2,7 +2,7 @@
     'listNamespaces', 'getCode', 'deleteCode', 'getCodeByCache', 'compileCode', 'runScript'
     ]}]*/
 
-const Sandbox = require('backstage-functions-sandbox');
+const Sandbox = require('@globocom/backstage-functions-sandbox');
 const Storage = require('../../lib/domain/storage');
 
 class FakeStorage extends Storage {

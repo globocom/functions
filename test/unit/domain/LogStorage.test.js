@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
 const sinon = require('sinon');
 
-const { MemoryStream } = require('backstage-functions-sandbox');
+const { MemoryStream } = require('@globocom/backstage-functions-sandbox');
 const {
   StdoutLogStorage,
   GelfLogStorage,

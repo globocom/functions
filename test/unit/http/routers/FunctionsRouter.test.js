@@ -2,7 +2,7 @@ const request = require('supertest');
 const chai = require('chai');
 chai.use(require('chai-string'));
 
-const Sandbox = require('backstage-functions-sandbox');
+const Sandbox = require('@globocom/backstage-functions-sandbox');
 
 const expect = chai.expect;
 const routes = require('../../../../lib/http/routes');
