@@ -4,8 +4,8 @@
   "description": "Remote serverless code executor",
   "main": "index.js",
   "scripts": {
-    "test": "REDIS_KEY_PREFIX=test istanbul cover _mocha --report lcovonly -- --recursive",
-    "send_cover": "istanbul-coveralls",
+    "test": "REDIS_KEY_PREFIX=test nyc mocha  --recursive test/",
+    "send_cover": "nyc report --reporter=text-lcov | coveralls",
     "start_dev": "nf -j Procfile.local -e .env.local start",
     "lint": "eslint lib test"
   },
@@ -54,6 +54,7 @@
     "istanbul-coveralls": "^1.0.3",
     "mocha": "^3.0.2",
     "nodemon": "^1.10.2",
+    "nyc": "^11.3.0",
     "sinon": "^1.17.6",
     "supertest": "^2.0.0"
   }
