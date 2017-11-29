@@ -1,5 +1,6 @@
 /* eslint class-methods-use-this: ['error', { "exceptMethods": [
-    'listNamespaces', 'getCode', 'deleteCode', 'getCodeByCache', 'compileCode', 'runScript'
+    'listNamespaces', 'getCode', 'deleteCode', 'getCodeByCache', 'compileCode', 'runScript',
+    'getNamespace', 'deleteNamespace'
     ]}]*/
 
 const Sandbox = require('@globocom/backstage-functions-sandbox');
@@ -133,6 +134,31 @@ class FakeStorage extends Storage {
     }
 
     this.lastEnvUnset = { namespace, id, env };
+    return null;
+  }
+
+  async putNamespace(namespace, data) {
+    if (namespace === 'error') {
+      throw new Error('Storage error');
+    }
+
+    this.lastPutNamespace = Object.assign({}, data, { namespace });
+  }
+
+  async getNamespace(namespace) {
+    if (namespace === 'found') {
+      return { namespace, sentryDSN: 'http://sentry.io/project' };
+    } else if (namespace === 'error') {
+      throw new Error('Storage error');
+    }
+
+    return null;
+  }
+
+  async deleteNamespace(namespace) {
+    if (namespace === 'error') {
+      throw new Error('Storage error');
+    }
     return null;
   }
 }
