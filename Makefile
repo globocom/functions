@@ -35,7 +35,8 @@ else
 	@echo "You are not using the desired node version: ${DESIRED_NODE_VERSION}, your version: ${CURRENT_NODE_VERSION}"
 	@if test -d ~/.nodenv; then \
 		echo "Nodenv is already installed"; \
-		bash -c "nodenv global ${DESIRED_NODE_VERSION}"; \
+		bash -c "nodenv install $(subst v,,${DESIRED_NODE_VERSION}) -s"; \
+		bash -c "nodenv global $(subst v,,${DESIRED_NODE_VERSION})"; \
 	else \
 		make setup_nvm; \
 		bash -c "source ~/.nvm/nvm.sh && nvm install ${DESIRED_NODE_VERSION} && nvm use ${DESIRED_NODE_VERSION}"; \
