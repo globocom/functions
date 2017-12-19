@@ -12,9 +12,8 @@ describe('Metric', () => {
 
   before((done) => {
     sandbox = sinon.sandbox.create();
-    sandbox.stub(config.metric, 'client', 'functions-test');
-    sandbox.stub(config.metric, 'udpHost', 'localhost');
-
+    sandbox.stub(config.metric, 'client').value('functions-test');
+    sandbox.stub(config.metric, 'udpHost').value('localhost');
 
     const server = dgram.createSocket('udp4');
 
@@ -28,7 +27,7 @@ describe('Metric', () => {
     });
 
     server.on('listening', () => {
-      sandbox.stub(config.metric, 'udpPort', server.address().port);
+      sandbox.stub(config.metric, 'udpPort').value(server.address().port);
       done();
     });
 

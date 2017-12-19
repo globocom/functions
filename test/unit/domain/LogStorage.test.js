@@ -51,7 +51,7 @@ describe('GelfLogStorage', () => {
     gelfServer.listen();
 
     sandbox = sinon.sandbox.create();
-    sandbox.stub(config.log, 'fieldsFromHTTPHeaders', {
+    sandbox.stub(config.log, 'fieldsFromHTTPHeaders').value({
       rid: 'x-rid',
       clientId: 'x-client-id',
     });

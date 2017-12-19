@@ -480,8 +480,8 @@ describe('StorageRedis', () => {
     before(() => {
       sandbox = sinon.sandbox.create();
       fakeWorker = new FakeWorker();
-      sandbox.stub(storage, 'worker', fakeWorker);
-      sandbox.stub(storage, 'ping', () => new Promise(() => {}));
+      sandbox.stub(storage, 'worker').value(fakeWorker);
+      sandbox.stub(storage, 'ping').callsFake(() => new Promise(() => {}));
     });
 
     after(() => {
