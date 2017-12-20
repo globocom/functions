@@ -178,5 +178,28 @@ describe('GelfLogStorage', () => {
         expect(receivedMsg.level).to.be.eql(3);
       });
     });
+
+    describe('when exist a console overflow', () => {
+      before((done) => {
+        for (let i = 0; i < 1000; i += 1) {
+          logStorage.console.info(`line ${i}`);
+        }
+
+        gelfServer.once('message', (msg) => {
+          receivedMsg = msg;
+          done();
+        });
+
+        logStorage.flush({
+          status: 500,
+          requestTime: 20,
+        });
+      });
+
+      it('should truncate the `full_message` attribute', () => {
+        expect(receivedMsg.full_message.length).to.be.eql(3010);
+        expect(receivedMsg.full_message.endsWith('\ntruncated')).to.be.true;
+      });
+    });
   });
 });
