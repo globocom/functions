@@ -102,7 +102,7 @@ describe('ErrorTracker', () => {
     });
 
     it('should contains the culprit', () => {
-      expect(resultCtx.culprit).to.be.eql('testing at main');
+      expect(resultCtx.culprit).to.be.eql('testing/testing.js: testing at main');
     });
 
     it('should contains the event_id', () => {
