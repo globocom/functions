@@ -141,7 +141,7 @@ describe('ErrorTracker', () => {
     });
 
     it('should contains the message', () => {
-      expect(resultCtx.message).to.be.eql('Error: testing');
+      expect(resultCtx.message).to.be.eql('testing/testing.js: Error: testing');
     });
   });
 });
