@@ -93,6 +93,14 @@ describe('GET /_schema/:schema', () => {
               rel: 'env-unset',
             },
             {
+              href: `http://${host}/namespaces/{namespace}`,
+              method: 'PUT',
+              rel: 'update-namespace',
+              schema: {
+                type: 'object',
+              },
+            },
+            {
               href: `http://${host}/functions/{namespace}/{id}`,
               method: 'POST',
               rel: 'add',
@@ -178,6 +186,14 @@ describe('GET /_schema/:schema', () => {
               href: `http://${host}/functions/{namespace}/{id}/env/{envVar}`,
               method: 'DELETE',
               rel: 'env-unset',
+            },
+            {
+              href: `http://${host}/namespaces/{namespace}`,
+              method: 'PUT',
+              rel: 'update-namespace',
+              schema: {
+                type: 'object',
+              },
             },
           ]);
         })
