@@ -94,6 +94,10 @@ describe('GET /_schema/:schema', () => {
             },
             {
               href: `http://${host}/namespaces/{namespace}`,
+              rel: 'namespace',
+            },
+            {
+              href: `http://${host}/namespaces/{namespace}`,
               method: 'PUT',
               rel: 'update-namespace',
               schema: {
@@ -186,6 +190,10 @@ describe('GET /_schema/:schema', () => {
               href: `http://${host}/functions/{namespace}/{id}/env/{envVar}`,
               method: 'DELETE',
               rel: 'env-unset',
+            },
+            {
+              href: `http://${host}/namespaces/{namespace}`,
+              rel: 'namespace',
             },
             {
               href: `http://${host}/namespaces/{namespace}`,
