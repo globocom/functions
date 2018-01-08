@@ -8,6 +8,7 @@ class FakeSentryDSN extends EventEmitter {
   constructor() {
     super();
     this.nextEventID = '6701c255-9431-46f4-a59e-eda424742dab';
+    this.sent = false;
   }
   generateEventId() {
     return this.nextEventID;
@@ -18,6 +19,7 @@ class FakeSentryDSN extends EventEmitter {
   }
 
   send(ctx, callback) {
+    this.sent = true;
     this.emit('sent', ctx);
     callback(null);
   }
@@ -26,6 +28,8 @@ class FakeSentryDSN extends EventEmitter {
 describe('ErrorTracker', () => {
   describe('#notify', () => {
     let resultCtx;
+    let sentryClient;
+    let errTracker;
 
     before((done) => {
       const err = new Error('testing');
@@ -40,9 +44,9 @@ describe('ErrorTracker', () => {
             throw new Error('testing');
          }
      `;
-      const sentryClient = new FakeSentryDSN();
+      sentryClient = new FakeSentryDSN();
 
-      const errTracker = new ErrorTracker({
+      errTracker = new ErrorTracker({
         sentryDSN: 'http://my-sentry/project',
         filename: 'testing/testing.js',
         extra: {
@@ -142,6 +146,20 @@ describe('ErrorTracker', () => {
 
     it('should contains the message', () => {
       expect(resultCtx.message).to.be.eql('testing/testing.js: Error: testing');
+    });
+
+    describe('when err contains a non error status code', () => {
+      before(() => {
+        sentryClient.sent = false;
+
+        const err = new Error('Not a critical error');
+        err.statusCode = 404;
+        errTracker.notify(err);
+      });
+
+      it('should ignore error and not send to sentry', () => {
+        expect(sentryClient.sent).to.be.false;
+      });
     });
   });
 });
