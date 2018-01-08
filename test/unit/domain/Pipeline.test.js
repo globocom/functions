@@ -131,17 +131,27 @@ describe('Pipeline', () => {
     });
 
     it('should be able to run one function with 404', async () => {
-      const result = await new Pipeline(sandbox, req, [step404]).run();
-      expect(result.body.error).to.be.eql('Not found an item');
-      expect(result.status).to.be.eql(404);
+      try {
+        await new Pipeline(sandbox, req, [step404]).run();
+      } catch (err) {
+        expect(err.message).to.be.eql('Not found an item');
+        expect(err.statusCode).to.be.eql(404);
+        return;
+      }
+
+      throw new Error('Not raised an error');
     });
 
     it('should be able to run three functions with 404', async () => {
-      const result = await new Pipeline(sandbox, req, [step200, step404, step200b]).run();
-      expect(result.body.error).to.be.eql('Not found an item');
-      expect(result.body.namespace).to.be.eql('backstage');
-      expect(result.body.functionId).to.be.eql('step404');
-      expect(result.status).to.be.eql(404);
+      try {
+        await new Pipeline(sandbox, req, [step200, step404, step200b]).run();
+      } catch (err) {
+        expect(err.message).to.be.eql('Not found an item');
+        expect(err.statusCode).to.be.eql(404);
+        return;
+      }
+
+      throw new Error('Not raised an error');
     });
 
     it('should fail if the first function fail', async () => {
