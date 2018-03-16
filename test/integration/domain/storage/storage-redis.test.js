@@ -40,6 +40,7 @@ describe('StorageRedis', () => {
           CLIENT_ID: 'my client id',
           MY_VAR: 'my var',
         },
+        exposed: true,
       };
       const x = await storage.putCode('backstage', 'test', code);
       expect(x).to.be.eql('OK');
@@ -53,6 +54,7 @@ describe('StorageRedis', () => {
       expect(code2.versionID).to.match(UUID_REGEX);
       expect(code2.env.CLIENT_ID).to.be.eql('my client id');
       expect(code2.env.MY_VAR).to.be.eql('my var');
+      expect(code2.exposed).to.be.eql(true);
     });
 
     it('should have a created equal updated for new function', async () => {
