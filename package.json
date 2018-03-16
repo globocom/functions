@@ -39,6 +39,7 @@
     "request": "^2.81.0",
     "stack-trace": "^0.0.9",
     "uuid": "^3.0.1",
+    "vhost": "^3.0.2",
     "winston": "^2.2.0"
   },
   "devDependencies": {
