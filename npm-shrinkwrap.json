@@ -5,9 +5,9 @@
   "requires": true,
   "dependencies": {
     "@globocom/backstage-functions-sandbox": {
-      "version": "0.4.0",
-      "resolved": "https://registry.npmjs.org/@globocom/backstage-functions-sandbox/-/backstage-functions-sandbox-0.4.0.tgz",
-      "integrity": "sha1-NVow7OQumAcKsiONfp9KGz1d0Vo=",
+      "version": "0.4.1",
+      "resolved": "https://registry.npmjs.org/@globocom/backstage-functions-sandbox/-/backstage-functions-sandbox-0.4.1.tgz",
+      "integrity": "sha512-5eOxg/t4hzGb0aIukia4WW3seE8sxT2jVFXhy0sAION9H+a7TlJ8PhTctpp9EhRnWX+GevmeE784xwMNoVo3Eg==",
       "requires": {
         "once": "1.4.0",
         "stack-trace": "0.0.9"
