@@ -7,6 +7,7 @@
     "test": "REDIS_KEY_PREFIX=test nyc mocha  --recursive test/",
     "send_cover": "nyc report --reporter=text-lcov | coveralls",
     "start_dev": "nf -j Procfile.local -e .env.local start",
+    "start_sandbox": "NUM_CPUS=1 STORAGE=inmemory nf -j Procfile.sandbox -e .env.local start",
     "lint": "eslint lib test"
   },
   "repository": {
