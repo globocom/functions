@@ -1,4 +1,4 @@
-.PHONY: run setup test setup_upgrade install_node setup_nvm lint clean
+.PHONY: run run-sandbox setup test setup_upgrade install_node setup_nvm lint clean
 
 DESIRED_NODE_VERSION = v$(shell cat .node-version)
 CURRENT_NODE_VERSION = $(shell node --version)
@@ -18,6 +18,9 @@ setup: install_node
 
 run:
 	npm run start_dev
+
+run-sandbox:
+	npm run start_sandbox
 
 test:
 	npm test
