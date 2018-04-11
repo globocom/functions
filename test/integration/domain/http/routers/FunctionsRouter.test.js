@@ -3,52 +3,6 @@ const expect = require('chai').expect;
 const routes = require('../../../../../lib/http/routes');
 
 describe('FunctionRouter integration', () => {
-  describe('POST /functions/:namespace/:id', () => {
-    describe('when code is correct', () => {
-      const code = `
-        function main(req, res) {
-          res.send({ foo: 'bar' });
-        }
-      `;
-
-      it('should put the code at the function', (done) => {
-        request(routes)
-          .post('/functions/function-router-test/test1')
-          .send({ code })
-          .expect('content-type', /json/)
-          .expect(200)
-          .end((err, res) => {
-            if (err) {
-              done(err);
-            }
-            expect(res.body.code).to.be.eql(code);
-            expect(res.body.id).to.be.eql('test1');
-            done();
-          });
-      });
-    });
-
-    describe('when code already exists', () => {
-      const code = `
-        function main(req, res) {
-          res.send({ foo: 'bar' });
-        }
-      `;
-
-      it('should returns 400 - Bad Request', (done) => {
-        request(routes)
-          .post('/functions/function-router-test/test1')
-          .send({ code })
-          .expect('content-type', /json/)
-          .expect(400)
-          .end((err, res) => {
-            expect(res.body.error).to.be.eql('The key function-router-test:test1 already exists');
-            done();
-          });
-      });
-    });
-  });
-
   describe('PUT /functions/:namespace/:id', () => {
     describe('when code is correct', () => {
       const code = `
