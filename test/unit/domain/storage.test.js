@@ -11,13 +11,6 @@ describe('storage', () => {
     });
   });
 
-  describe('#postCode', () => {
-    it('should throws an unimplemented error', () => {
-      const fn = () => storage.postCode();
-      expect(fn).to.throw(Error, /unimplemented method for Storage interface/);
-    });
-  });
-
   describe('#putCode', () => {
     it('should throws an unimplemented error', () => {
       const fn = () => storage.putCode();
