@@ -57,7 +57,7 @@ docker-compose up
 ```
 
 ## How to use
-### Creating a function
+### Function Structure
 Your function will have a file, which you define any name you want, and it has to have a function called `main`, with two parameters: `req` and `res`. Req represents the `Request` and Res represents the `Response`.
 At the end of your code, you'll have to use the `send` method.
 
@@ -68,25 +68,16 @@ function main(req, res) {
   res.send({ say: `Hello ${name}!` })
 }
 ```
+### Setting a function
 
-To store your function, you can make a `POST` request to `/functions/:namespace/:name`:
-```bash
-curl -i -X POST http://localhost:8100/functions/example/hello-world \
-    -H 'content-type: application/json' \
-    -d '{"code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}!` })\n}\n"}'
-```
-
-*ps: if already exists, it will not be updated*
-
-### Updating a function
-To update your function, you can make a `PUT` request to `/functions/:namespace/:name`:
+To set your function, you can make a `PUT` request to `/functions/:namespace/:name`:
 ```bash
 curl -i -X PUT http://localhost:8100/functions/example/hello-world \
     -H 'content-type: application/json' \
     -d '{"code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}! Nice meeting you...` })\n}\n"}'
 ```
 
-*ps: if it doesn't exists, it will be created*
+*Ps: if it doesn't exists, it will be created*
 
 ### Deleting a function
 To delete your function, you can make a `DELETE` request to `/functions/:namespace/:name`:
