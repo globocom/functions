@@ -36,18 +36,6 @@ class FakeStorage extends Storage {
     };
   }
 
-  async postCode(namespace, id, code) {
-    this.lastPutCode = code;
-
-    if (id === 'exists') {
-      throw new Error('Code already exists');
-    } else if (id === 'error') {
-      throw new Error('Storage error');
-    }
-
-    return [1, 1];
-  }
-
   async putCode(namespace, id, code) {
     this.lastPutCode = code;
     if (id === 'error') {
