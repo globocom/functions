@@ -28,6 +28,37 @@ describe('GET /functions', () => {
       })
       .expect(200, done);
   });
+
+  it('search by namespace', (done) => {
+    request(routes)
+      .get('/functions?namespace=namespace1')
+      .expect('Content-Type', /json/)
+      .expect(200, {
+        items: [
+          { namespace: 'namespace1', id: 'function1' },
+          { namespace: 'namespace1', id: 'function2' },
+        ],
+      }, done);
+  });
+
+  it('search by namespace and function id', (done) => {
+    request(routes)
+      .get('/functions?namespace=namespace1&id=function1')
+      .expect('Content-Type', /json/)
+      .expect(200, {
+        items: [
+          { namespace: 'namespace1', id: 'function1' },
+        ],
+      }, done);
+  });
+
+  it('should fail the request with 500 error', (done) => {
+    request(routes)
+      .get('/functions?namespace=error')
+      .expect(500, {
+        error: 'Storage error',
+      }, done);
+  });
 });
 
 describe('PUT /functions/:namespace/:id', () => {
@@ -390,3 +421,4 @@ describe('DELETE /functions/:namespace/:id/env/:env', () => {
     });
   });
 });
+
