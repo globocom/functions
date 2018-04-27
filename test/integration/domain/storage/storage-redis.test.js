@@ -497,4 +497,60 @@ describe('StorageRedis', () => {
       });
     });
   });
+
+  describe('#search()', () => {
+    describe('with valid values', () => {
+      beforeEach(() => {
+        storage.setNamespaceMember('namespace1', 'function1');
+        storage.setNamespaceMember('namespace1', 'function2');
+        storage.setNamespaceMember('namespace2', 'function1');
+      });
+
+      it('with namespace', async () => {
+        const list = await storage.search('namespace1');
+        expect(list).to.deep.equal({
+          items: [
+            {
+              id: 'function1',
+              namespace: 'namespace1',
+            },
+            {
+              id: 'function2',
+              namespace: 'namespace1',
+            },
+          ],
+          nextPage: 2,
+          page: 1,
+          perPage: 10,
+        });
+      });
+
+      it('with namespace and id', async () => {
+        const list = await storage.search('namespace1', 'function1');
+        expect(list).to.deep.equal({
+          items: [
+            {
+              id: 'function1',
+              namespace: 'namespace1',
+            },
+          ],
+          nextPage: 2,
+          page: 1,
+          perPage: 10,
+        });
+      });
+    });
+
+    describe('with invalid values', () => {
+      it('without namespace and function id', async () => {
+        const list = await storage.search('invalid-namespace', 'id');
+        expect(list).to.deep.equal({
+          items: [],
+          nextPage: 2,
+          page: 1,
+          perPage: 10,
+        });
+      });
+    });
+  });
 });
