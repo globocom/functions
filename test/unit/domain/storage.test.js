@@ -38,4 +38,11 @@ describe('storage', () => {
       expect(fn).to.throw(Error, /unimplemented method for Storage interface/);
     });
   });
+
+  describe('#search', () => {
+    it('should throws an unimplemented error', () => {
+      const fn = () => storage.search();
+      expect(fn).to.throw(Error, /unimplemented method for Storage interface/);
+    });
+  });
 });

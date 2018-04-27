@@ -8,7 +8,7 @@ const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12
 describe('StorageInMemory', () => {
   let storage;
 
-  before(() => {
+  beforeEach(() => {
     storage = new StorageInMemory();
   });
 
@@ -401,6 +401,59 @@ describe('StorageInMemory', () => {
 
       const result = await storage.getNamespace('will-delete');
       expect(result).to.be.null;
+    });
+  });
+
+  describe('#search', () => {
+    describe('with valid values', () => {
+      beforeEach(() => {
+        storage.setNamespaceMember('namespace1', 'function1');
+        storage.setNamespaceMember('namespace1', 'function2');
+        storage.setNamespaceMember('namespace2', 'function1');
+      });
+
+      it('with namespace', async () => {
+        const list = await storage.search('namespace1');
+        expect(list).to.deep.equal({
+          items: [
+            {
+              id: 'function1',
+              namespace: 'namespace1',
+            },
+            {
+              id: 'function2',
+              namespace: 'namespace1',
+            },
+          ],
+          page: 1,
+          perPage: 10,
+        });
+      });
+
+      it('with namespace and id', async () => {
+        const list = await storage.search('namespace1', 'function1');
+        expect(list).to.deep.equal({
+          items: [
+            {
+              id: 'function1',
+              namespace: 'namespace1',
+            },
+          ],
+          page: 1,
+          perPage: 10,
+        });
+      });
+    });
+
+    describe('with invalid values', () => {
+      it('without namespace and function id', async () => {
+        const list = await storage.search('invalid-namespace', 'id');
+        expect(list).to.deep.equal({
+          items: [],
+          page: 1,
+          perPage: 10,
+        });
+      });
     });
   });
 });

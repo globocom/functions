@@ -1,6 +1,6 @@
 /* eslint class-methods-use-this: ['error', { "exceptMethods": [
     'listNamespaces', 'getCode', 'deleteCode', 'getCodeByCache', 'compileCode', 'runScript',
-    'getNamespace', 'deleteNamespace'
+    'getNamespace', 'deleteNamespace', 'search'
     ]}]*/
 
 const Sandbox = require('@globocom/backstage-functions-sandbox');
@@ -22,6 +22,28 @@ class FakeStorage extends Storage {
         { namespace: 'namespace3', id: 'function' },
       ],
     };
+  }
+
+  async search(namespace, id) {
+    if (id === 'function1' && namespace === 'namespace1') {
+      return {
+        items: [
+          { namespace: 'namespace1', id: 'function1' },
+        ],
+      };
+    }
+    if (namespace === 'namespace1') {
+      return {
+        items: [
+          { namespace: 'namespace1', id: 'function1' },
+          { namespace: 'namespace1', id: 'function2' },
+        ],
+      };
+    }
+    if (namespace === 'error' || id === 'error') {
+      throw new Error('Storage error');
+    }
+    return { items: [] };
   }
 
   async getCode(namespace, id) {
