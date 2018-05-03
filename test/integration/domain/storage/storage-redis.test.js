@@ -498,12 +498,16 @@ describe('StorageRedis', () => {
     });
   });
 
+
   describe('#search()', () => {
     describe('with valid values', () => {
-      beforeEach(() => {
+      before(() => {
         storage.setNamespaceMember('namespace1', 'function1');
         storage.setNamespaceMember('namespace1', 'function2');
         storage.setNamespaceMember('namespace2', 'function1');
+        for (let i = 1; i <= 25; i += 1) {
+          storage.setNamespaceMember('namespace3', `function${i}`);
+        }
       });
 
       it('with namespace', async () => {
@@ -538,6 +542,29 @@ describe('StorageRedis', () => {
           page: 1,
           perPage: 10,
         });
+      });
+
+      it('with page 1', async () => {
+        const list = await storage.search('namespace3');
+        expect(list.items).to.have.lengthOf(10);
+      });
+
+      it('with page 2', async () => {
+        const page = 2;
+        const list = await storage.search('namespace3', '', page);
+        expect(list.items).to.have.lengthOf(10);
+      });
+
+      it('with page 3', async () => {
+        const page = 3;
+        const list = await storage.search('namespace3', '', page);
+        expect(list.items).to.have.lengthOf(5);
+      });
+
+      it('with perPage 5', async () => {
+        const perPage = 5;
+        const list = await storage.search('namespace3', '', 1, perPage);
+        expect(list.items).to.have.lengthOf(perPage);
       });
     });
 
