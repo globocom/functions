@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 services:
   web:
     container_name: functions_app
@@ -15,12 +15,12 @@ services:
     container_name: functions_db
     image: redis
     volumes:
-      - functions_vol:/data
+      - redis_vol:/data
     networks:
       - functions_net
 
 volumes:
-  functions_vol:
+  redis_vol:
 
 networks:
   functions_net:
