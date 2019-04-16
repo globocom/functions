@@ -9,6 +9,10 @@ services:
       - functions_net
     depends_on:
      - redis
+    command: node lib/app.js
+    volumes:
+      - .:/application/functions
+      - node_vol:/application/functions/node_modules
     environment:
       REDIS_ENDPOINT: redis://redis:6379/0
   redis:
@@ -21,6 +25,7 @@ services:
 
 volumes:
   redis_vol:
+  node_vol:
 
 networks:
   functions_net:
