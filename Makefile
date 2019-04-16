@@ -26,6 +26,16 @@ test:
 	npm test
 	$(MAKE) lint
 
+rund:
+	docker-compose up -d
+
+stopd:
+	docker-compose down
+
+testd: rund
+	@echo 'Running tests in container'
+	@docker exec -t functions_app make test
+
 setup_upgrade: clean
 	npm install
 	npm shrinkwrap
