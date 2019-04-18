@@ -144,10 +144,10 @@ describe('PUT /functions/:namespace/:id', () => {
         .put('/functions/codes/timeout')
         .send({ code })
         .expect('Content-Type', /json/)
-        .expect(400, {
-          error: 'Error: Script execution timed out.',
-          stack: '',
-        }, done);
+        .expect((res) => {
+          expect(res.body.error).to.include('Error: Script execution timed out');
+        })
+        .expect(400, done);
     });
   });
 
