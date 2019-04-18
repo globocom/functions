@@ -73,7 +73,7 @@ clean:
 	-rm -rf node_modules
 
 docker_build:
-	docker build -t globobackstage/functions .
+	docker build -t globocom/functions .
 
 docker_push:
-	docker push globobackstage/functions
+	docker push globocom/functions
