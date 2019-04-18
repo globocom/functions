@@ -2,7 +2,7 @@ version: '3'
 services:
   web:
     container_name: functions_app
-    image: globobackstage/functions
+    image: globocom/functions
     ports:
       - "8100:8100"
     networks:
