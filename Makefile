@@ -32,9 +32,13 @@ rund:
 stopd:
 	docker-compose down
 
-testd: rund
+testd: stopd
+	@echo 'Starting test containers'
+	docker-compose -f docker-compose-test.yml up -d
 	@echo 'Running tests in container'
-	@docker exec -t functions_app make test
+	@docker exec -t functions_app_test make test
+	@echo 'Stopping test containers'
+	docker-compose -f docker-compose-test.yml down -v
 
 setup_upgrade: clean
 	npm install
