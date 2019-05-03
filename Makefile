@@ -26,6 +26,20 @@ test:
 	npm test
 	$(MAKE) lint
 
+rund:
+	docker-compose up -d
+
+stopd:
+	docker-compose down
+
+testd: stopd
+	@echo 'Starting test containers'
+	docker-compose -f docker-compose-test.yml up -d
+	@echo 'Running tests in container'
+	@docker exec -t functions_app_test make test
+	@echo 'Stopping test containers'
+	docker-compose -f docker-compose-test.yml down -v
+
 setup_upgrade: clean
 	npm install
 	npm shrinkwrap
@@ -63,7 +77,7 @@ clean:
 	-rm -rf node_modules
 
 docker_build:
-	docker build -t globobackstage/functions .
+	docker build -t globocom/functions .
 
 docker_push:
-	docker push globobackstage/functions
+	docker push globocom/functions

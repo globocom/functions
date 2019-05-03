@@ -1,0 +1,31 @@
+version: '3'
+services:
+  web:
+    container_name: functions_app_test
+    image: globocom/functions
+    ports:
+      - "127.0.0.1:8100:8100"
+    networks:
+      - functions_net_test
+    environment:
+      REDIS_ENDPOINT: redis://redis:6379/0
+    depends_on:
+      - redis
+    command: node lib/app.js
+    volumes:
+      - .:/application/functions
+      - node_test_vol:/application/functions/node_modules
+  redis:
+    container_name: functions_db_test
+    image: redis
+    volumes:
+      - redis_test_vol:/data
+    networks:
+      - functions_net_test
+
+volumes:
+  redis_test_vol:
+  node_test_vol:
+
+networks:
+  functions_net_test:
