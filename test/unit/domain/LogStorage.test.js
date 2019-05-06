@@ -76,6 +76,17 @@ describe('GelfLogStorage', () => {
     expect(stderr.buf).to.be.an.instanceof(MemoryStream);
   });
 
+  it('should have a gelfClients property in GelfLogStorage', () => {
+    expect(logStorage).to.have.property('gelfClients');
+  });
+
+  it('should initialize more than one gelfClient when config.log.host is a list', () => {
+    config.log.host = ['localhost', 'localhost'];
+    const newLogStorage = new GelfLogStorage('test-namespace', 'test-id', req);
+    expect(newLogStorage.gelfClients.length).to.be.eql(2);
+    config.log.host = 'localhost';
+  });
+
   describe('#flush', () => {
     let receivedMsg;
 
