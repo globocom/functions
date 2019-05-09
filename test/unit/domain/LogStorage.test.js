@@ -76,14 +76,14 @@ describe('GelfLogStorage', () => {
     expect(stderr.buf).to.be.an.instanceof(MemoryStream);
   });
 
-  describe('when has more than one host in config.log.host', () => {
+  describe('when has more than one host in config.log.hosts', () => {
     before(() => {
-      config.log.host = ['localhost', '127.0.0.1'];
+      config.log.hosts = ['localhost', '127.0.0.1'];
       newLogStorage = new GelfLogStorage('test-namespace', 'test-id', req);
     });
 
     after(() => {
-      config.log.host = 'localhost';
+      config.log.hosts = 'localhost';
     });
 
     it('should be different gelfClients', () => {
