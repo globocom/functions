@@ -28,7 +28,6 @@ describe('StdoutLogStorage', () => {
   });
 });
 
-
 describe('GelfLogStorage', () => {
   /* eslint no-underscore-dangle: ["error", { "allow": [
          "_stdout", "_stderr", "_status", "_request_time", "_group", "_file",
@@ -45,6 +44,7 @@ describe('GelfLogStorage', () => {
   let gelfServer;
   let sandbox;
   let logStorage;
+  let newLogStorage;
 
   before(() => {
     gelfServer = new Graygelf();
@@ -74,6 +74,33 @@ describe('GelfLogStorage', () => {
     const stderr = logStorage.console._stderr;
     expect(stderr.prefix).to.be.eql('error:');
     expect(stderr.buf).to.be.an.instanceof(MemoryStream);
+  });
+
+  describe('when has more than one host in config.log.hosts', () => {
+    before(() => {
+      config.log.hosts = ['localhost', '127.0.0.1'];
+      newLogStorage = new GelfLogStorage('test-namespace', 'test-id', req);
+    });
+
+    after(() => {
+      config.log.hosts = 'localhost';
+    });
+
+    it('should be different gelfClients', () => {
+      const client1 = newLogStorage.gelfClients[0].config.adapterOptions.host;
+      const client2 = newLogStorage.gelfClients[1].config.adapterOptions.host;
+
+      expect(client1 === client2).to.be.false;
+      expect(newLogStorage.gelfClients[0] === newLogStorage.gelfClients[1]).to.be.false;
+    });
+
+    it('should have a gelfClients property in GelfLogStorage', () => {
+      expect(newLogStorage).to.have.property('gelfClients');
+    });
+
+    it('should initialize more than one gelfClient', () => {
+      expect(newLogStorage.gelfClients.length).to.be.eql(2);
+    });
   });
 
   describe('#flush', () => {
