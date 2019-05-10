@@ -4,7 +4,7 @@
   "description": "Remote serverless code executor",
   "main": "index.js",
   "scripts": {
-    "test": "REDIS_KEY_PREFIX=test nyc mocha  --recursive test/",
+    "test": "REDIS_KEY_PREFIX=test nyc mocha --ui bdd --recursive test/",
     "send_cover": "nyc report --reporter=text-lcov | coveralls",
     "start_dev": "nf -j Procfile.local -e .env.local start",
     "start_sandbox": "NUM_CPUS=1 STORAGE=inmemory nf -j Procfile.sandbox -e .env.local start",
