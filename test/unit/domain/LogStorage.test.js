@@ -87,8 +87,8 @@ describe('GelfLogStorage', () => {
     });
 
     it('should be different gelfClients', () => {
-      const client1 = newLogStorage.gelfClients[0].config.adapterOptions.host;
-      const client2 = newLogStorage.gelfClients[1].config.adapterOptions.host;
+      const client1 = newLogStorage.gelfClients[0].config.graylogHostname;
+      const client2 = newLogStorage.gelfClients[1].config.graylogHostname;
 
       expect(client1 === client2).to.be.false;
       expect(newLogStorage.gelfClients[0] === newLogStorage.gelfClients[1]).to.be.false;
@@ -136,31 +136,31 @@ describe('GelfLogStorage', () => {
       });
 
       it('should receive full_message attribute', () => {
-        expect(receivedMsg._status).to.be.eql(200);
+        expect(receivedMsg.status).to.be.eql(200);
       });
 
       it('should receive request_time attribute', () => {
-        expect(receivedMsg._request_time).to.be.eql(20);
+        expect(receivedMsg.request_time).to.be.eql(20);
       });
 
       it('should receive group attribute', () => {
-        expect(receivedMsg._group).to.be.eql('test-namespace');
+        expect(receivedMsg.group).to.be.eql('test-namespace');
       });
 
       it('should receive file attribute', () => {
-        expect(receivedMsg._file).to.be.eql('test-namespace/test-id.js');
+        expect(receivedMsg.file).to.be.eql('test-namespace/test-id.js');
       });
 
       it('should receive rid attribute extracted from HTTP header setting', () => {
-        expect(receivedMsg._rid).to.be.eql('my-rid');
+        expect(receivedMsg.rid).to.be.eql('my-rid');
       });
 
       it('should receive clientId attribute extracted from HTTP header setting', () => {
-        expect(receivedMsg._clientId).to.be.eql('my-client-id');
+        expect(receivedMsg.clientId).to.be.eql('my-client-id');
       });
 
       it('should receive level attribute', () => {
-        expect(receivedMsg.level).to.be.eql(6);
+        expect(receivedMsg.level).to.be.eql('info');
       });
     });
 
@@ -181,7 +181,7 @@ describe('GelfLogStorage', () => {
       });
 
       it('should receive level attribute', () => {
-        expect(receivedMsg.level).to.be.eql(4);
+        expect(receivedMsg.level).to.be.eql('warn');
       });
     });
 
@@ -202,7 +202,7 @@ describe('GelfLogStorage', () => {
       });
 
       it('should receive level attribute', () => {
-        expect(receivedMsg.level).to.be.eql(3);
+        expect(receivedMsg.level).to.be.eql('error');
       });
     });
 
