@@ -70,6 +70,11 @@ describe('GelfLogStorage', () => {
     expect(stdout.buf).to.be.an.instanceof(MemoryStream);
   });
 
+  it('should prefix extra fields with _', () => {
+    const extra = { a: 1, b: 2, _c: 3 };
+    expect(GelfLogStorage.prepareExtraFields(extra)).to.be.eqls({ _a: 1, _b: 2, _c: 3 });
+  });
+
   it('should create prefixed stdout console', () => {
     const stderr = logStorage.console._stderr;
     expect(stderr.prefix).to.be.eql('error:');
