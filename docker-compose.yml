@@ -9,7 +9,7 @@ services:
       - functions_net
     depends_on:
      - redis
-    command: node lib/app.js
+    command: ./node_modules/.bin/nodemon lib/app.js
     volumes:
       - .:/application/functions
       - node_vol:/application/functions/node_modules
