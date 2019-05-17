@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/backstage/functions.png?branch=master)](https://travis-ci.org/backstage/functions)
-[![Coverage Status](https://coveralls.io/repos/github/backstage/functions/badge.svg?branch=master)](https://coveralls.io/github/backstage/functions?branch=master)
+[![Build Status](https://travis-ci.org/backstage/functions.png?branch=master)](https://travis-ci.org/backstage/functions) [![Coverage Status](https://coveralls.io/repos/github/backstage/functions/badge.svg?branch=master)](https://coveralls.io/github/backstage/functions?branch=master)
 
 # Backstage Functions
 Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Platform able to store and execute code.
@@ -24,10 +23,6 @@ It uses the [Backstage Functions Sandbox](https://github.com/backstage/functions
 - Redis 3.0+
 - NodeJS 8.9.1
 
-### Download the project
-```bash
-git clone https://github.com/backstage/functions.git
-```
 
 ### Setup
 ```bash
@@ -37,6 +32,11 @@ make setup
 ### Run
 ```bash
 make run
+```
+
+### Test
+```bash
+make test
 ```
 
 ## Running locally via Docker
@@ -102,7 +102,7 @@ ETag: W/"16-soBGetwJPBLt8CqWpBQu+A"
 Date: Tue, 11 Oct 2016 16:51:04 GMT
 Connection: keep-alive
 
-{"say":"Hello World!"}
+{"say":"Hello World! Nice meeting you..."}
 ```
 
 If one needs to pass an object in the request, the payload is executed:
@@ -121,7 +121,7 @@ ETag: W/"16-Ino2/umXaZ3xVEhoqyS8aA"
 Date: Tue, 11 Oct 2016 17:13:11 GMT
 Connection: keep-alive
 
-{"say":"Hello Pedro!"}
+{"say":"Hello Pedro! Nice meeting you..."}
 ```
 
 ### Executing functions in a pipeline
@@ -129,9 +129,8 @@ Connection: keep-alive
 To execute many functions in a pipeline, you can make a `PUT` request to `/functions/pipeline`:
 ```javascript
 // Function0
-function main(req, res) {\
+function main(req, res) {
   res.send({x: req.body.x * 10});
-
 }
 
 // Function1
@@ -140,10 +139,9 @@ function main(req, res) {
 }
 ```
 
-```
+```bash
 curl -g -i -X PUT 'http://localhost:8100/functions/pipeline?steps[0]=namespace/function0&steps[1]=namespace/function1' \
-    -H 'content-type: application/json'
-    -d '{"x": 1}'
+    -H 'content-type: application/json' -d '{"x": 1}'
 ```
 
 Considering the curl above, the pipeline result would be like this:
