@@ -159,3 +159,100 @@ Connection: keep-alive
 
 {"x": 200}
 ```
+
+
+### *GET* `/`
+Response:
+```json
+{
+   "name": "Backstage functions"
+}
+```
+### *GET* `/healthcheck`
+Response:
+```json
+WORKING
+```
+### *GET* `/status`
+Response:
+```json
+{
+  "services": [
+    {
+      "name": "Redis",
+      "status": "WORKING",
+      "message": "PONG",
+      "time": 1
+    },
+    {
+      "name": "Sentry",
+      "status": "WORKING",
+      "message": "SENTRY_DSN is not setted yet",
+      "time": 1
+    }
+  ]
+}
+```
+
+### *PUT* `/functions/{namespace}/{function-name}`
+Request Payload:
+```json
+{
+   "code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}! Nice meeting you...` })\n}\n"
+}
+```
+Response:
+```json
+{
+   "id":"hello-world",
+   "code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}! Nice meeting you...` })\n}\n",
+   "hash":"bf741adc706b03b4329a0897d72961b792bf1c37"
+}
+```
+
+### *GET* `/functions`
+Response:
+```json
+{
+   "items":[
+         {
+            "namespace":"example",
+            "id":"hello-world"
+         },
+         {
+            "namespace":"example2",
+            "id":"hello-earth"
+         }
+    ],
+   "page":1,
+   "perPage":10
+}
+```
+
+### *PUT/POST/GET* `/function/{namespace}/{function-name}/run`
+Request Payload Example:
+```json
+{
+    "name":"User"
+}
+```
+Response:
+```json
+{
+    "say":"Hello User! Nice meeting you..."
+}
+```
+
+### *PUT* `/functions/pipeline?steps[0]=namespace/function0&steps[1]=namespace/function1`
+Request Payload Example:
+```json
+{
+    "x": 1
+}
+```
+Response:
+```json
+{
+    "x": 200
+}
+```
