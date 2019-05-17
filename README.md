@@ -44,19 +44,22 @@ make test
 - Docker 1.12+
 - Docker compose 1.8+
 
-### Download docker-compose.yml
+
+### Setup
 ```bash
-mkdir functions
-cd functions
-curl 'https://raw.githubusercontent.com/backstage/functions/master/docker-compose.yml' > docker-compose.yml
+make docker_build
 ```
 
 ### Run
 ```bash
-docker-compose up
+make rund
 ```
 
-## How to use
+### Test
+```bash
+make testd
+```
+
 ### Function Structure
 Your function will have a file, which you define any name you want, and it has to have a function called `main`, with two parameters: `req` and `res`. Req represents the `Request` and Res represents the `Response`.
 At the end of your code, you'll have to use the `send` method.
