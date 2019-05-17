@@ -136,31 +136,31 @@ describe('GelfLogStorage', () => {
       });
 
       it('should receive full_message attribute', () => {
-        expect(receivedMsg.status).to.be.eql(200);
+        expect(receivedMsg._status).to.be.eql(200);
       });
 
       it('should receive request_time attribute', () => {
-        expect(receivedMsg.request_time).to.be.eql(20);
+        expect(receivedMsg._request_time).to.be.eql(20);
       });
 
       it('should receive group attribute', () => {
-        expect(receivedMsg.group).to.be.eql('test-namespace');
+        expect(receivedMsg._group).to.be.eql('test-namespace');
       });
 
       it('should receive file attribute', () => {
-        expect(receivedMsg.file).to.be.eql('test-namespace/test-id.js');
+        expect(receivedMsg._file).to.be.eql('test-namespace/test-id.js');
       });
 
       it('should receive rid attribute extracted from HTTP header setting', () => {
-        expect(receivedMsg.rid).to.be.eql('my-rid');
+        expect(receivedMsg._rid).to.be.eql('my-rid');
       });
 
       it('should receive clientId attribute extracted from HTTP header setting', () => {
-        expect(receivedMsg.clientId).to.be.eql('my-client-id');
+        expect(receivedMsg._clientId).to.be.eql('my-client-id');
       });
 
       it('should receive level attribute', () => {
-        expect(receivedMsg.level).to.be.eql('info');
+        expect(receivedMsg.level).to.be.eql(6);
       });
     });
 
@@ -181,7 +181,7 @@ describe('GelfLogStorage', () => {
       });
 
       it('should receive level attribute', () => {
-        expect(receivedMsg.level).to.be.eql('warn');
+        expect(receivedMsg.level).to.be.eql(4);
       });
     });
 
@@ -202,7 +202,7 @@ describe('GelfLogStorage', () => {
       });
 
       it('should receive level attribute', () => {
-        expect(receivedMsg.level).to.be.eql('error');
+        expect(receivedMsg.level).to.be.eql(3);
       });
     });
 
