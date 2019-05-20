@@ -77,7 +77,7 @@ clean:
 	-rm -rf node_modules
 
 docker_build:
-	docker build -t globocom/functions .
+	docker build -t globocom/functions . --no-cache
 
 docker_push:
 	docker push globocom/functions
