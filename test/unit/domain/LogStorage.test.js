@@ -70,6 +70,11 @@ describe('GelfLogStorage', () => {
     expect(stdout.buf).to.be.an.instanceof(MemoryStream);
   });
 
+  it('should prefix extra fields with _', () => {
+    const extra = { a: 1, b: 2, _c: 3 };
+    expect(GelfLogStorage.prepareExtraFields(extra)).to.be.eqls({ _a: 1, _b: 2, _c: 3 });
+  });
+
   it('should create prefixed stdout console', () => {
     const stderr = logStorage.console._stderr;
     expect(stderr.prefix).to.be.eql('error:');
@@ -87,8 +92,8 @@ describe('GelfLogStorage', () => {
     });
 
     it('should be different gelfClients', () => {
-      const client1 = newLogStorage.gelfClients[0].config.adapterOptions.host;
-      const client2 = newLogStorage.gelfClients[1].config.adapterOptions.host;
+      const client1 = newLogStorage.gelfClients[0].config.graylogHostname;
+      const client2 = newLogStorage.gelfClients[1].config.graylogHostname;
 
       expect(client1 === client2).to.be.false;
       expect(newLogStorage.gelfClients[0] === newLogStorage.gelfClients[1]).to.be.false;
