@@ -113,61 +113,14 @@ describe('FunctionRouter integration', () => {
           .expect({ foo: 'bar' }, done);
       });
     });
+  });
 
-    describe('500 status code', () => {
+  describe('POST /functions/:namespace/:id/run', () => {
+    describe('simple run with json body', () => {
       before((done) => {
         const code = `
           function main(req, res) {
-            res.internalServerError('My server is crashed');
-          }
-        `;
-
-        request(routes)
-          .put('/functions/function-router-run/test2')
-          .send({ code })
-          .expect(200)
-          .expect('content-type', /json/, done);
-      });
-
-      it('should returns the status 500 with text plain content', (done) => {
-        request(routes)
-          .put('/functions/function-router-run/test2/run')
-          .expect(500)
-          .expect('content-type', /json/)
-          .expect('{"error":"My server is crashed"}', done);
-      });
-    });
-
-    describe('304 status code', () => {
-      before((done) => {
-        const code = `
-          function main(req, res) {
-            res.notModified();
-          }
-        `;
-
-        request(routes)
-          .put('/functions/function-router-run/test2')
-          .send({ code })
-          .expect(200)
-          .expect('content-type', /json/, done);
-      });
-
-      it('should returns the status 500 with text plain content', (done) => {
-        request(routes)
-          .put('/functions/function-router-run/test2/run')
-          .expect(304)
-          .expect('', done);
-      });
-    });
-
-    describe('body and query string to the code and combine then', () => {
-      before((done) => {
-        const code = `
-          function main(req, res) {
-            const query = req.query;
-            const body = req.body;
-            res.send({ query, body });
+            res.send({ foo: 'bar' });
           }
         `;
 
@@ -178,24 +131,122 @@ describe('FunctionRouter integration', () => {
           .expect('content-type', /json/, done);
       });
 
-      it('should returns the status 403 with text plain content', (done) => {
-        const person = { name: 'John Doe' };
-
+      it('should runs the code and return properlly', (done) => {
         request(routes)
-          .put('/functions/function-router-run/test3/run?where[name]=John')
-          .send({ person })
+          .post('/functions/function-router-run/test3/run')
           .expect(200)
           .expect('content-type', /json/)
-          .expect({
-            body: { person },
-            query: { where: { name: 'John' } },
-          }, done);
+          .expect({ foo: 'bar' }, done);
       });
     });
+  });
 
-    describe('require arbitrary library inside function', () => {
+  describe('DELETE /functions/:namespace/:id/run', () => {
+    describe('simple run with json body', () => {
       before((done) => {
         const code = `
+          function main(req, res) {
+            res.send({ foo: 'bar' });
+          }
+        `;
+
+        request(routes)
+          .put('/functions/function-router-run/test4')
+          .send({ code })
+          .expect(200)
+          .expect('content-type', /json/, done);
+      });
+
+      it('should return 405 status code', (done) => {
+        request(routes)
+          .delete('/functions/function-router-run/test4/run')
+          .expect(405, done);
+      });
+    });
+  });
+
+  describe('500 status code', () => {
+    before((done) => {
+      const code = `
+          function main(req, res) {
+            res.internalServerError('My server is crashed');
+          }
+        `;
+
+      request(routes)
+        .put('/functions/function-router-run/test2')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
+
+    it('should returns the status 500 with text plain content', (done) => {
+      request(routes)
+        .put('/functions/function-router-run/test2/run')
+        .expect(500)
+        .expect('content-type', /json/)
+        .expect('{"error":"My server is crashed"}', done);
+    });
+  });
+
+  describe('304 status code', () => {
+    before((done) => {
+      const code = `
+          function main(req, res) {
+            res.notModified();
+          }
+        `;
+
+      request(routes)
+        .put('/functions/function-router-run/test2')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
+
+    it('should returns the status 500 with text plain content', (done) => {
+      request(routes)
+        .put('/functions/function-router-run/test2/run')
+        .expect(304)
+        .expect('', done);
+    });
+  });
+
+  describe('body and query string to the code and combine then', () => {
+    before((done) => {
+      const code = `
+          function main(req, res) {
+            const query = req.query;
+            const body = req.body;
+            res.send({ query, body });
+          }
+        `;
+
+      request(routes)
+        .put('/functions/function-router-run/test3')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
+
+    it('should returns the status 403 with text plain content', (done) => {
+      const person = { name: 'John Doe' };
+
+      request(routes)
+        .put('/functions/function-router-run/test3/run?where[name]=John')
+        .send({ person })
+        .expect(200)
+        .expect('content-type', /json/)
+        .expect({
+          body: { person },
+          query: { where: { name: 'John' } },
+        }, done);
+    });
+  });
+
+  describe('require arbitrary library inside function', () => {
+    before((done) => {
+      const code = `
           const _ = require('lodash');
           const people = [{name: 'John'}, {name: 'Doe'}];
           function main(req, res) {
@@ -204,19 +255,18 @@ describe('FunctionRouter integration', () => {
           }
         `;
 
-        request(routes)
-          .put('/functions/function-router-run/test4').send({ code })
-          .expect(200)
-          .expect('content-type', /json/, done);
-      });
+      request(routes)
+        .put('/functions/function-router-run/test4').send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
 
-      it('should uses the arbitrary library properly', (done) => {
-        request(routes)
-          .put('/functions/function-router-run/test4/run')
-          .expect(200)
-          .expect('content-type', /json/)
-          .expect({ names: ['John', 'Doe'] }, done);
-      });
+    it('should uses the arbitrary library properly', (done) => {
+      request(routes)
+        .put('/functions/function-router-run/test4/run')
+        .expect(200)
+        .expect('content-type', /json/)
+        .expect({ names: ['John', 'Doe'] }, done);
     });
   });
 });
