@@ -24,10 +24,6 @@ It uses the [Backstage Functions Sandbox](https://github.com/backstage/functions
 - Redis 3.0+
 - NodeJS 8.9.1
 
-### Download the project
-```bash
-git clone https://github.com/backstage/functions.git
-```
 
 ### Setup
 ```bash
@@ -39,24 +35,32 @@ make setup
 make run
 ```
 
+### Test
+```bash
+make test
+```
+
 ## Running locally via Docker
 ### Requirements
 - Docker 1.12+
 - Docker compose 1.8+
 
-### Download docker-compose.yml
+
+### Setup
 ```bash
-mkdir functions
-cd functions
-curl 'https://raw.githubusercontent.com/backstage/functions/master/docker-compose.yml' > docker-compose.yml
+make docker_build
 ```
 
 ### Run
 ```bash
-docker-compose up
+make rund
 ```
 
-## How to use
+### Test
+```bash
+make testd
+```
+
 ### Function Structure
 Your function will have a file, which you define any name you want, and it has to have a function called `main`, with two parameters: `req` and `res`. Req represents the `Request` and Res represents the `Response`.
 At the end of your code, you'll have to use the `send` method.
@@ -102,7 +106,7 @@ ETag: W/"16-soBGetwJPBLt8CqWpBQu+A"
 Date: Tue, 11 Oct 2016 16:51:04 GMT
 Connection: keep-alive
 
-{"say":"Hello World!"}
+{"say":"Hello World! Nice meeting you..."}
 ```
 
 If one needs to pass an object in the request, the payload is executed:
@@ -121,7 +125,7 @@ ETag: W/"16-Ino2/umXaZ3xVEhoqyS8aA"
 Date: Tue, 11 Oct 2016 17:13:11 GMT
 Connection: keep-alive
 
-{"say":"Hello Pedro!"}
+{"say":"Hello Pedro! Nice meeting you..."}
 ```
 
 ### Executing functions in a pipeline
@@ -129,9 +133,8 @@ Connection: keep-alive
 To execute many functions in a pipeline, you can make a `PUT` request to `/functions/pipeline`:
 ```javascript
 // Function0
-function main(req, res) {\
+function main(req, res) {
   res.send({x: req.body.x * 10});
-
 }
 
 // Function1
@@ -140,10 +143,9 @@ function main(req, res) {
 }
 ```
 
-```
+```bash
 curl -g -i -X PUT 'http://localhost:8100/functions/pipeline?steps[0]=namespace/function0&steps[1]=namespace/function1' \
-    -H 'content-type: application/json'
-    -d '{"x": 1}'
+    -H 'content-type: application/json' -d '{"x": 1}'
 ```
 
 Considering the curl above, the pipeline result would be like this:
@@ -157,4 +159,101 @@ Date: Tue, 11 Oct 2016 17:13:11 GMT
 Connection: keep-alive
 
 {"x": 200}
+```
+
+
+### *GET* `/`
+Response:
+```json
+{
+   "name": "Backstage functions"
+}
+```
+### *GET* `/healthcheck`
+Response:
+```json
+WORKING
+```
+### *GET* `/status`
+Response:
+```json
+{
+  "services": [
+    {
+      "name": "Redis",
+      "status": "WORKING",
+      "message": "PONG",
+      "time": 1
+    },
+    {
+      "name": "Sentry",
+      "status": "WORKING",
+      "message": "SENTRY_DSN is not setted yet",
+      "time": 1
+    }
+  ]
+}
+```
+
+### *PUT* `/functions/{namespace}/{function-name}`
+Request Payload:
+```json
+{
+   "code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}! Nice meeting you...` })\n}\n"
+}
+```
+Response:
+```json
+{
+   "id":"hello-world",
+   "code":"function main(req, res) {\n  const name = (req.body && req.body.name) || \"World\"\n  res.send({ say: `Hello ${name}! Nice meeting you...` })\n}\n",
+   "hash":"bf741adc706b03b4329a0897d72961b792bf1c37"
+}
+```
+
+### *GET* `/functions`
+Response:
+```json
+{
+   "items":[
+         {
+            "namespace":"example",
+            "id":"hello-world"
+         },
+         {
+            "namespace":"example2",
+            "id":"hello-earth"
+         }
+    ],
+   "page":1,
+   "perPage":10
+}
+```
+
+### *PUT/POST/GET* `/function/{namespace}/{function-name}/run`
+Request Payload Example:
+```json
+{
+    "name":"User"
+}
+```
+Response:
+```json
+{
+    "say":"Hello User! Nice meeting you..."
+}
+```
+
+### *PUT* `/functions/pipeline?steps[0]=namespace/function0&steps[1]=namespace/function1`
+Request Payload Example:
+```json
+{
+    "x": 1
+}
+```
+Response:
+```json
+{
+    "x": 200
+}
 ```
