@@ -56,6 +56,7 @@ describe('GelfLogStorage', () => {
       clientId: 'x-client-id',
     });
 
+    config.log.hosts = ['localhost', '127.0.0.1'];
     logStorage = new GelfLogStorage('test-namespace', 'test-id', req);
   });
 
@@ -83,7 +84,6 @@ describe('GelfLogStorage', () => {
 
   describe('when has more than one host in config.log.hosts', () => {
     before(() => {
-      config.log.hosts = ['localhost', '127.0.0.1'];
       newLogStorage = new GelfLogStorage('test-namespace', 'test-id', req);
     });
 
