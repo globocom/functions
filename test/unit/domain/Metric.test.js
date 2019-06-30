@@ -1,60 +1,20 @@
-const dgram = require('dgram');
 const expect = require('chai').expect;
-const sinon = require('sinon');
+const prometheusClient = require('prom-client');
 
-const config = require('../../../lib/support/config');
 const Metric = require('../../../lib/domain/Metric');
 
 
 describe('Metric', () => {
-  let sandbox;
-  let onMessage;
-
-  before((done) => {
-    sandbox = sinon.sandbox.create();
-    sandbox.stub(config.metric, 'client').value('functions-test');
-    sandbox.stub(config.metric, 'udpHost').value('localhost');
-
-    const server = dgram.createSocket('udp4');
-
-    server.on('error', (err) => {
-      done(err);
-      server.close();
+  describe('#observeFunctionRun', () => {
+    beforeEach(() => {
+      prometheusClient.register.resetMetrics();
     });
 
-    server.on('message', (msg) => {
-      onMessage(msg);
+    it('should increment metrics in registry', () => {
+      new Metric().observeFunctionRun({ namespace: 'xpto', id: 'blah', status: 403 });
+      const data = prometheusClient.register.metrics();
+      expect(data).to.be.include('backstage_functions_function_run_total{namespace="xpto",id="blah",status="4xx"} 1');
+      expect(data).to.be.include('backstage_functions_function_run_duration_seconds_bucket{le="0.05",namespace="xpto",id="blah"} 1');
     });
-
-    server.on('listening', () => {
-      sandbox.stub(config.metric, 'udpPort').value(server.address().port);
-      done();
-    });
-
-    server.bind(0);
-  });
-
-  after(() => {
-    sandbox.restore();
-  });
-
-  it('should send metric by udp', (done) => {
-    let spent;
-    const metric = new Metric('test-metric');
-    setTimeout(() => {
-      spent = metric.finish({
-        test: 'testing',
-      });
-    }, 100);
-
-    onMessage = (msg) => {
-      const data = JSON.parse(msg);
-      expect(data.client).to.be.eql('functions-test');
-      expect(data.metric).to.be.eql('test-metric');
-      expect(data.time).to.be.below(120); // time in milleseconds
-      expect(spent).to.be.below(1); // time in seconds
-      expect(data.test).to.be.eql('testing');
-      done();
-    };
   });
 });
