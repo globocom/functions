@@ -15,6 +15,23 @@ describe('Metric', () => {
       const data = prometheusClient.register.metrics();
       expect(data).to.be.include('backstage_functions_function_run_total{namespace="xpto",id="blah",status="4xx"} 1');
       expect(data).to.be.include('backstage_functions_function_run_duration_seconds_bucket{le="0.05",namespace="xpto",id="blah"} 1');
+
+      expect(data).to.be.include('backstage_functions_overview_run_total{status="4xx"} 1');
+      expect(data).to.be.include('backstage_functions_overview_run_duration_seconds_bucket{le="0.05"} 1');
+    });
+  });
+
+  describe('#observePipelineRun', () => {
+    beforeEach(() => {
+      prometheusClient.register.resetMetrics();
+    });
+
+    it('should increment metrics in registry', () => {
+      new Metric().observePipelineRun(403);
+      const data = prometheusClient.register.metrics();
+
+      expect(data).to.be.include('backstage_functions_pipeline_run_total{status="4xx"} 1');
+      expect(data).to.be.include('backstage_functions_pipeline_run_duration_seconds_bucket{le="0.05"} 1');
     });
   });
 });
