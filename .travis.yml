@@ -8,11 +8,6 @@ node_js:
   - "8.9.1"
   - "8"
   - "node"
-notifications:
-  email:
-    - backstage1@corp.globo.com
-  slack:
-    secure: RGXv00o6a2lTXeBN0YvMkADgDpTxrSl0zNjZ/czu98ADwjJIt+Omsj9CqKjpUkQYjZNNOkm+Ak+WYnsHHe3LA+hJIVshFs0HyOlTo400AAK+q3w4YiAbt60e/a3efsqyS3hRm6HwwNTgRTHWQj2h86i/nHPU0krA4R7nI7K0RgrowFCeJmZkOOB8uAj0SYX30/qKMfMWV7V4uH0L+lrtNY8lKgX4Lr54v/J2JpeP8VvB9h1jRcYdLfMBayYvNnrMUCRFPyTpky27WGY97SLMje1cILPfSfXoXJJPxZnUoP9bjF5Eauts+wHjh5ULjCDSev/AuJ6Z2p6qjTPsFx8Qrr/wERl1NyUvajyheLOpKr30dyzLZ0EFYrHlCB0pmodbdsuo9x/flCqLUaVL+djPEibRgTt08Del63dqsM2YY0xMufk87ivPEJHccHBa3ym3iFuQgTmeGGhSNmxrnH+wQnxnRyj5ofgQkx1sSlQj+84qFSMrIIWvEO9cnIhLti3rUirryiPElWJepVMuRpfUJ7QQ8mT+yM/o62cVcK/s4Y5nd3myaPX12qPxKBW2T6eqWiSo5QdLSKDDQgIrtDcs1P8cvp1UJV8scTqrxGa3Yu3qVOxnpvLIn0FWL6UvPysmaxJJVJ34rtMQRX7y7gyx7aAm2bZKBbNLhS+J2HCsVJw=
 env:
   - CXX=g++-4.8 REDIS_ENDPOINT=redis://localhost:6379/0
 services:
