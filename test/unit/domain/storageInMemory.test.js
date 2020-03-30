@@ -64,6 +64,50 @@ describe('StorageInMemory', () => {
     // when code is found is already tested above
   });
 
+  describe('sentryDSN', () => {
+    beforeEach(async () => {
+      this.namespace = 'backstage';
+      this.code = {
+        id: 'test',
+        code: 'a = 1;',
+        hash: '123',
+      };
+      await storage.deleteNamespace(this.namespace);
+      await storage.deleteCode(this.namespace, this.code.id);
+    });
+
+    it('when is configured in the namespace', async () => {
+      const x = await storage.putCode(this.namespace, this.code.id, this.code);
+      expect(x).to.be.eql('OK');
+      await storage.putNamespace(this.namespace, {
+        namespace: this.namespace,
+        sentryDSN: 'http://my-sentry.io/foo',
+      });
+
+      const result = await storage.getCode(this.namespace, this.code.id);
+      expect(result.sentryDSN).to.be.eql('http://my-sentry.io/foo');
+    });
+
+    it('when is configured in the env', async () => {
+      this.code.env = {
+        sentryDSN: 'http://my-sentry.io/fooenv',
+      };
+      const x = await storage.putCode(this.namespace, this.code.id, this.code);
+      expect(x).to.be.eql('OK');
+
+      const result = await storage.getCode(this.namespace, this.code.id);
+      expect(result.sentryDSN).to.be.eql('http://my-sentry.io/fooenv');
+    });
+
+    it('when isn`t configured', async () => {
+      const x = await storage.putCode(this.namespace, this.code.id, this.code);
+      expect(x).to.be.eql('OK');
+
+      const result = await storage.getCode(this.namespace, this.code.id);
+      expect(result.sentryDSN).to.be.null;
+    });
+  });
+
   describe('#delete()', () => {
     it('should write a hash for the code', async () => {
       const id = 'test';
