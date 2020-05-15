@@ -110,10 +110,11 @@ describe('PUT /functions/:namespace/:id', () => {
         .put('/functions/backstage/invalid')
         .send({ code: '{)' })
         .expect('Content-Type', /application\/json/)
-        .expect(400, {
-          error: 'SyntaxError: Unexpected token )',
-          stack: '',
-        }, done);
+        .expect((res) => {
+          expect(res.body.error).to.deep.include('Unexpected token');
+          expect(res.body.stack).to.be.equal('');
+        })
+        .expect(400, done);
     });
   });
 
