@@ -17,9 +17,9 @@ class FakeStorage extends Storage {
   async listNamespaces() {
     return {
       items: [
-        { namespace: 'namespace1', id: 'function' },
-        { namespace: 'namespace2', id: 'function' },
-        { namespace: 'namespace3', id: 'function' },
+        { namespace: 'namespace1', id: 'function', version: '0.0.1' },
+        { namespace: 'namespace2', id: 'function', version: '0.0.1' },
+        { namespace: 'namespace3', id: 'function', version: '0.0.1' },
       ],
     };
   }
@@ -28,15 +28,16 @@ class FakeStorage extends Storage {
     if (id === 'function1' && namespace === 'namespace1') {
       return {
         items: [
-          { namespace: 'namespace1', id: 'function1' },
+          { namespace: 'namespace1', id: 'function1', version: '0.0.1' },
+          { namespace: 'namespace1', id: 'function1', version: '0.0.2' },
         ],
       };
     }
     if (namespace === 'namespace1') {
       return {
         items: [
-          { namespace: 'namespace1', id: 'function1' },
-          { namespace: 'namespace1', id: 'function2' },
+          { namespace: 'namespace1', id: 'function1', version: '0.0.1' },
+          { namespace: 'namespace1', id: 'function2', version: '0.0.1' },
         ],
       };
     }

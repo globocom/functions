@@ -6,16 +6,16 @@ const Sandbox = require('@globocom/backstage-functions-sandbox');
 
 const expect = chai.expect;
 const routes = require('../../../../lib/http/routes');
-const FakeStorage = require('../../../fakes/FakeStorage');
+const FakeStorage = require('../../../fakes/FakeStorageV2');
 
-describe('GET /functions', () => {
+describe('GET /v2/functions', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
   });
 
   it('should return namespaces with their functions', (done) => {
     request(routes)
-      .get('/functions')
+      .get('/v2/functions')
       .expect((res) => {
         expect(res.body.items[0].namespace).to.be.eql('namespace1');
         expect(res.body.items[0].id).to.be.eql('function');
@@ -30,37 +30,38 @@ describe('GET /functions', () => {
 
   it('search by namespace', (done) => {
     request(routes)
-      .get('/functions?namespace=namespace1')
+      .get('/v2/functions?namespace=namespace1')
       .expect('Content-Type', /json/)
       .expect(200, {
         items: [
-          { namespace: 'namespace1', id: 'function1' },
-          { namespace: 'namespace1', id: 'function2' },
+          { namespace: 'namespace1', id: 'function1', version: '0.0.1' },
+          { namespace: 'namespace1', id: 'function2', version: '0.0.1' },
         ],
       }, done);
   });
 
   it('search by namespace and function id', (done) => {
     request(routes)
-      .get('/functions?namespace=namespace1&id=function1')
+      .get('/v2/functions?namespace=namespace1&id=function1')
       .expect('Content-Type', /json/)
       .expect(200, {
         items: [
-          { namespace: 'namespace1', id: 'function1' },
+          { namespace: 'namespace1', id: 'function1', version: '0.0.1' },
+          { namespace: 'namespace1', id: 'function1', version: '0.0.2' },
         ],
       }, done);
   });
 
   it('should fail the request with 500 error', (done) => {
     request(routes)
-      .get('/functions?namespace=error')
+      .get('/v2/functions?namespace=error')
       .expect(500, {
         error: 'Storage error',
       }, done);
   });
 });
 
-describe('PUT /functions/:namespace/:id', () => {
+describe('PUT /v2/functions/:namespace/:id/:version', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
   });
@@ -70,7 +71,7 @@ describe('PUT /functions/:namespace/:id', () => {
       const code = 'function main() {}';
 
       request(routes)
-        .put('/functions/backstage/correct')
+        .put('/v2/functions/backstage/correct/0.0.1')
         .send({ code })
         .expect('Content-Type', /json/)
         .expect(() => {
@@ -78,7 +79,7 @@ describe('PUT /functions/:namespace/:id', () => {
           expect(memoryStorage.lastPutCode).to.be.eql({
             id: 'correct',
             hash: 'c177063dc3780c2fe9b4fdc913650e8147c9b8b0',
-            version: 'latest',
+            version: '0.0.1',
             code,
           });
         })
@@ -86,7 +87,7 @@ describe('PUT /functions/:namespace/:id', () => {
           id: 'correct',
           code: 'function main() {}',
           hash: 'c177063dc3780c2fe9b4fdc913650e8147c9b8b0',
-          version: 'latest',
+          version: '0.0.1',
         }, done);
     });
   });
@@ -96,7 +97,7 @@ describe('PUT /functions/:namespace/:id', () => {
       const code = 'function main() {}';
 
       request(routes)
-        .put('/functions/backstage/error')
+        .put('/v2/functions/backstage/error/0.0.1')
         .send({ code })
         .expect('Content-Type', /json/)
         .expect(500, {
@@ -108,7 +109,7 @@ describe('PUT /functions/:namespace/:id', () => {
   describe('when code has a syntax error', () => {
     it('should return a error', (done) => {
       request(routes)
-        .put('/functions/backstage/invalid')
+        .put('/v2/functions/backstage/invalid/0.0.1')
         .send({ code: '{)' })
         .expect('Content-Type', /application\/json/)
         .expect((res) => {
@@ -128,12 +129,12 @@ describe('PUT /functions/:namespace/:id', () => {
             c()`;
 
       request(routes)
-        .put('/functions/codes/crazy')
+        .put('/v2/functions/codes/crazy/0.0.1')
         .send({ code })
         .expect('Content-Type', /json/)
         .expect(400, {
           error: 'TypeError: a.b is not a function',
-          stack: 'at c (codes/crazy.js:3)\nat codes/crazy.js:5\nat codes/crazy.js:6',
+          stack: 'at c (codes/crazy/0.0.1.js:3)\nat codes/crazy/0.0.1.js:5\nat codes/crazy/0.0.1.js:6',
         }, done);
     });
   });
@@ -143,7 +144,7 @@ describe('PUT /functions/:namespace/:id', () => {
       const code = 'while(1) {};';
 
       request(routes)
-        .put('/functions/codes/timeout')
+        .put('/v2/functions/codes/timeout/0.0.1')
         .send({ code })
         .expect('Content-Type', /json/)
         .expect((res) => {
@@ -158,7 +159,7 @@ describe('PUT /functions/:namespace/:id', () => {
       const code = { wrong: 'yes' };
 
       request(routes)
-        .put('/functions/codes/invalid')
+        .put('/v2/functions/codes/invalid/0.0.1')
         .send({ code })
         .expect('Content-Type', /^application\/json/)
         .expect(400, {
@@ -172,7 +173,7 @@ describe('PUT /functions/:namespace/:id', () => {
 });
 
 
-describe('GET /functions/:namespace/:id', () => {
+describe('GET /v2/functions/:namespace/:id/:version', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
   });
@@ -180,7 +181,7 @@ describe('GET /functions/:namespace/:id', () => {
   describe('when code is not found', () => {
     it('should return 404 error', (done) => {
       request(routes)
-        .get('/functions/backstage/not-found')
+        .get('/v2/functions/backstage/not-found/0.0.1')
         .expect((res) => {
           expect(res.body.error).to.be.eql('Code not found');
         })
@@ -191,7 +192,7 @@ describe('GET /functions/:namespace/:id', () => {
   describe('when code is found', () => {
     it('should return the code', (done) => {
       request(routes)
-        .get('/functions/backstage/found')
+        .get('/v2/functions/backstage/found/0.0.1')
         .expect('ETag', 'my-hash-123')
         .expect((res) => {
           expect(res.body.hash).to.be.eql('my-hash-123');
@@ -202,7 +203,7 @@ describe('GET /functions/:namespace/:id', () => {
 });
 
 
-describe('DELETE /functions/:namespace/:id', () => {
+describe('DELETE /v2/functions/:namespace/:id/:version', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
   });
@@ -210,7 +211,7 @@ describe('DELETE /functions/:namespace/:id', () => {
   describe('when delete is not sucessfully', () => {
     it('should return 500 error', (done) => {
       request(routes)
-        .delete('/functions/backstage/error')
+        .delete('/v2/functions/backstage/error/0.0.1')
         .expect((res) => {
           expect(res.body.error).to.be.eql('Storage error');
         })
@@ -221,14 +222,14 @@ describe('DELETE /functions/:namespace/:id', () => {
   describe('when delete is successfully', () => {
     it('should return 204', (done) => {
       request(routes)
-        .delete('/functions/backstage/found')
+        .delete('/v2/functions/backstage/found/0.0.1')
         .expect(204, done);
     });
   });
 });
 
 
-describe('PUT /functions/:namespace/:id/run', () => {
+describe('PUT /v2/functions/:namespace/:id/:version/run', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
     routes.set('sandbox', new Sandbox({}));
@@ -237,7 +238,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
   describe('when code is found in cache', () => {
     it('should reuse compiled code from storage cache', (done) => {
       request(routes)
-        .put('/functions/backstage/cached/run')
+        .put('/v2/functions/backstage/cached/0.0.1/run')
         .send({ args: [1, 2] })
         .expect(200, {
           result: 'cached',
@@ -249,7 +250,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
   describe('when code is found in cache', () => {
     it('should reuse compiled code from storage cache', (done) => {
       request(routes)
-        .put('/functions/backstage/send-string/run')
+        .put('/v2/functions/backstage/send-string/0.0.1/run')
         .send({ args: [1, 2] })
         .expect('content-type', /json/)
         .expect(200, '"this is an alert"', done);
@@ -259,7 +260,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
   describe('when code is not found in cache', () => {
     it('should compile code from storage', (done) => {
       request(routes)
-        .put('/functions/backstage/fresh/run')
+        .put('/v2/functions/backstage/fresh/0.0.1/run')
         .send({ args: [3, 4] })
         .expect(200, {
           result: 'fresh',
@@ -271,7 +272,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
   describe('when code is not found in storage', () => {
     it('should return a 404 error', (done) => {
       request(routes)
-        .put('/functions/backstage/not-found/run')
+        .put('/v2/functions/backstage/not-found/0.0.1/run')
         .send({ args: [] })
         .expect(404, {
           error: 'Code \'backstage/not-found\' was not found',
@@ -282,7 +283,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
   describe('when error is found', () => {
     it('should return a 500 error', (done) => {
       request(routes)
-        .put('/functions/backstage/error/run')
+        .put('/v2/functions/backstage/error/0.0.1/run')
         .send({ args: [] })
         .expect(500, {
           error: 'Storage error',
@@ -293,7 +294,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
   describe('when error with custom status code is found', () => {
     it('should return a custom status code', (done) => {
       request(routes)
-        .put('/functions/backstage/customError/run')
+        .put('/v2/functions/backstage/customError/0.0.1/run')
         .send({ args: [] })
         .expect(422, {
           error: 'Custom error',
@@ -303,7 +304,7 @@ describe('PUT /functions/:namespace/:id/run', () => {
 });
 
 
-describe('PUT /functions/pipeline', () => {
+describe('PUT /v2/functions/pipeline', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
     routes.set('sandbox', new Sandbox({}));
@@ -312,7 +313,7 @@ describe('PUT /functions/pipeline', () => {
   describe('when there are no steps', () => {
     it('should return a bad request', (done) => {
       request(routes)
-        .put('/functions/pipeline')
+        .put('/v2/functions/pipeline')
         .expect(400, {
           error: 'Step query param is required',
         }, done);
@@ -322,9 +323,9 @@ describe('PUT /functions/pipeline', () => {
   describe('when step does not exists', () => {
     it('should return a not found request', (done) => {
       request(routes)
-        .put('/functions/pipeline?steps[0]=backstage/not-found')
+        .put('/v2/functions/pipeline?steps[0]=backstage/not-found/0.1.0')
         .expect(404, {
-          error: 'Code \'backstage/not-found\' was not found',
+          error: 'Code \'backstage/not-found/0.1.0\' was not found',
         }, done);
     });
   });
@@ -332,7 +333,7 @@ describe('PUT /functions/pipeline', () => {
   describe('when step use two steps', () => {
     it('should return a result', (done) => {
       request(routes)
-        .put('/functions/pipeline?steps[0]=backstage/step1&steps[1]=backstage/step2')
+        .put('/v2/functions/pipeline?steps[0]=backstage/step1/latest&steps[1]=backstage/step2/0.1.0')
         .send({ x: 1 })
         .expect(200, { x: 200 }, done);
     });
@@ -340,7 +341,7 @@ describe('PUT /functions/pipeline', () => {
 });
 
 
-describe('PUT /functions/:namespace/:id/env/:env', () => {
+describe('PUT /v2/functions/:namespace/:id/:version/env/:env', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
   });
@@ -348,7 +349,7 @@ describe('PUT /functions/:namespace/:id/env/:env', () => {
   describe('when pass a json string on body', () => {
     it('should create an enviroment variable', (done) => {
       request(routes)
-        .put('/functions/backstage/correct/env/MY_VAR')
+        .put('/v2/functions/backstage/correct/0.0.1/env/MY_VAR')
         .set('content-type', 'application/json')
         .send('"MY VALUE"')
         .expect(() => {
@@ -356,7 +357,7 @@ describe('PUT /functions/:namespace/:id/env/:env', () => {
           expect(memoryStorage.lastEnvSet).to.be.eql({
             namespace: 'backstage',
             id: 'correct',
-            version: 'latest',
+            version: '0.0.1',
             env: 'MY_VAR',
             value: 'MY VALUE',
           });
@@ -368,7 +369,7 @@ describe('PUT /functions/:namespace/:id/env/:env', () => {
   describe('when the target function it\'s not exist', () => {
     it('should fail the request with 404 error', (done) => {
       request(routes)
-        .put('/functions/backstage/not-found/env/MY_VAR')
+        .put('/v2/functions/backstage/not-found/0.0.1/env/MY_VAR')
         .set('content-type', 'application/json')
         .send('"MY VALUE"')
         .expect(404, {
@@ -380,7 +381,7 @@ describe('PUT /functions/:namespace/:id/env/:env', () => {
   describe('when not pass a json string on body', () => {
     it('should validate', (done) => {
       request(routes)
-        .put('/functions/backstage/correct/env/MY_VAR')
+        .put('/v2/functions/backstage/correct/0.0.1/env/MY_VAR')
         .send('wrong string')
         .expect('Content-Type', /json/)
         .expect(400, {
@@ -393,7 +394,7 @@ describe('PUT /functions/:namespace/:id/env/:env', () => {
   });
 });
 
-describe('DELETE /functions/:namespace/:id/env/:env', () => {
+describe('DELETE /v2/functions/:namespace/:id/:version/env/:env', () => {
   before(() => {
     routes.set('memoryStorage', new FakeStorage());
   });
@@ -401,7 +402,7 @@ describe('DELETE /functions/:namespace/:id/env/:env', () => {
   describe('when sucessfully', () => {
     it('should delete an enviroment variable', (done) => {
       request(routes)
-        .delete('/functions/backstage/correct/env/MY_VAR')
+        .delete('/v2/functions/backstage/correct/0.0.1/env/MY_VAR')
         .expect(() => {
           const memoryStorage = routes.get('memoryStorage');
           expect(memoryStorage.lastEnvUnset).to.be.eql({
@@ -417,7 +418,7 @@ describe('DELETE /functions/:namespace/:id/env/:env', () => {
   describe('when the target function it\'s not exist', () => {
     it('should fail the request with 404 error', (done) => {
       request(routes)
-        .delete('/functions/backstage/not-found/env/MY_VAR')
+        .delete('/v2/functions/backstage/not-found/0.0.1/env/MY_VAR')
         .expect(404, {
           error: 'Function not found',
         }, done);

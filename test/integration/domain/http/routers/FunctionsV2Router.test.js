@@ -2,8 +2,8 @@ const request = require('supertest');
 const expect = require('chai').expect;
 const routes = require('../../../../../lib/http/routes');
 
-describe('FunctionRouter integration', () => {
-  describe('PUT /functions/:namespace/:id', () => {
+describe('FunctionV2Router integration', () => {
+  describe('PUT /v2/functions/:namespace/:id/:version', () => {
     describe('when code is correct', () => {
       const code = `
         function main(req, res) {
@@ -13,7 +13,7 @@ describe('FunctionRouter integration', () => {
 
       it('should put the code at the function', (done) => {
         request(routes)
-          .put('/functions/function-router-test/test1')
+          .put('/v2/functions/functionv2-router-test/test1/0.0.1')
           .send({ code })
           .expect('content-type', /json/)
           .expect(200)
@@ -23,13 +23,14 @@ describe('FunctionRouter integration', () => {
             }
             expect(res.body.code).to.be.eql(code);
             expect(res.body.id).to.be.eql('test1');
+            expect(res.body.version).to.be.eql('0.0.1');
             done();
           });
       });
     });
   });
 
-  describe('GET /functions/:namespace/:id', () => {
+  describe('PUT v1 and GET v2 with latest', () => {
     let code;
     before((done) => {
       code = `
@@ -39,15 +40,99 @@ describe('FunctionRouter integration', () => {
       `;
 
       request(routes)
-        .put('/functions/function-router-get/test2')
+        .put('/functions/function-v1/test1')
         .send({ code })
         .expect(200)
         .expect('content-type', /json/, done);
     });
 
-    it('should get the code at the function', (done) => {
+    it('should return the code at latest version', (done) => {
       request(routes)
-        .get('/functions/function-router-get/test2')
+        .get('/v2/functions/function-v1/test1/latest')
+        .expect(200)
+        .expect('content-type', /json/)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+
+          expect(res.body.code).to.be.eql(code);
+          expect(res.body.id).to.be.eql('test1');
+          expect(res.body.version).to.be.eql(null);
+          done();
+        });
+    });
+  });
+
+  describe('PUT v2 and GET v1', () => {
+    let code;
+    before((done) => {
+      code = `
+        function main(req, res) {
+          res.send({ foo: 'bar' });
+        }
+      `;
+
+      request(routes)
+        .put('/v2/functions/function-v2/test1/0.0.1')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/);
+
+      request(routes)
+        .put('/v2/functions/function-v2/test1/0.0.2')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
+
+    it('should return the code at latest version', (done) => {
+      request(routes)
+        .get('/functions/function-v2/test1')
+        .expect(200)
+        .expect('content-type', /json/)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+
+          expect(res.body.code).to.be.eql(code);
+          expect(res.body.id).to.be.eql('test1');
+          expect(res.body.version).to.be.eql('0.0.2');
+          done();
+        });
+    });
+  });
+
+  describe('PUT v2 old version and GET v1 latest', () => {
+    let code;
+    before((done) => {
+      code = `
+        function main(req, res) {
+          res.send({ foo: 'bar' });
+        }
+      `;
+
+      // newer version
+      request(routes)
+        .put('/v2/functions/function-v2/test2/0.2.1')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
+
+    // patch fix for 0.1.1
+    before((done) => {
+      request(routes)
+        .put('/v2/functions/function-v2/test2/0.1.2')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
+
+    it('should return the code at latest version', (done) => {
+      request(routes)
+        .get('/functions/function-v2/test2')
         .expect(200)
         .expect('content-type', /json/)
         .end((err, res) => {
@@ -57,13 +142,48 @@ describe('FunctionRouter integration', () => {
 
           expect(res.body.code).to.be.eql(code);
           expect(res.body.id).to.be.eql('test2');
+          expect(res.body.version).to.be.eql('0.2.1');
+          done();
+        });
+    });
+  });
+
+  describe('GET /v2/functions/:namespace/:id/:version', () => {
+    let code;
+    before((done) => {
+      code = `
+        function main(req, res) {
+          res.send({ foo: 'bar' });
+        }
+      `;
+
+      request(routes)
+        .put('/v2/functions/functionv2-router-get/test2/0.0.1')
+        .send({ code })
+        .expect(200)
+        .expect('content-type', /json/, done);
+    });
+
+    it('should get the code at the function', (done) => {
+      request(routes)
+        .get('/v2/functions/functionv2-router-get/test2/0.0.1')
+        .expect(200)
+        .expect('content-type', /json/)
+        .end((err, res) => {
+          if (err) {
+            done(err);
+          }
+
+          expect(res.body.code).to.be.eql(code);
+          expect(res.body.id).to.be.eql('test2');
+          expect(res.body.version).to.be.eql('0.0.1');
           expect(res.body.hash).to.exists;
           done();
         });
     });
   });
 
-  describe('GET /functions/:namespace/:id/run', () => {
+  describe('GET /v2/functions/:namespace/:id/:version/run', () => {
     describe('simple run with json body', () => {
       before((done) => {
         const code = `
@@ -73,7 +193,7 @@ describe('FunctionRouter integration', () => {
         `;
 
         request(routes)
-          .put('/functions/function-router-run/test2')
+          .put('/v2/functions/functionv2-router-run/test2/0.0.1')
           .send({ code })
           .expect(200)
           .expect('content-type', /json/, done);
@@ -81,7 +201,7 @@ describe('FunctionRouter integration', () => {
 
       it('should runs the code and return properlly', (done) => {
         request(routes)
-          .get('/functions/function-router-run/test2/run')
+          .get('/v2/functions/functionv2-router-run/test2/0.0.1/run')
           .expect(200)
           .expect('content-type', /json/)
           .expect({ hey: 'GET' }, done);
@@ -89,7 +209,7 @@ describe('FunctionRouter integration', () => {
     });
   });
 
-  describe('PUT /functions/:namespace/:id/run', () => {
+  describe('PUT /v2/functions/:namespace/:id/:version/run', () => {
     describe('simple run with json body', () => {
       before((done) => {
         const code = `
@@ -99,7 +219,7 @@ describe('FunctionRouter integration', () => {
         `;
 
         request(routes)
-          .put('/functions/function-router-run/test1')
+          .put('/v2/functions/functionv2-router-run/test1/0.0.1')
           .send({ code })
           .expect(200)
           .expect('content-type', /json/, done);
@@ -107,7 +227,7 @@ describe('FunctionRouter integration', () => {
 
       it('should runs the code and return properlly', (done) => {
         request(routes)
-          .put('/functions/function-router-run/test1/run')
+          .put('/v2/functions/functionv2-router-run/test1/0.0.1/run')
           .expect(200)
           .expect('content-type', /json/)
           .expect({ foo: 'bar' }, done);
@@ -123,7 +243,7 @@ describe('FunctionRouter integration', () => {
         `;
 
         request(routes)
-          .put('/functions/function-router-run/test2')
+          .put('/v2/functions/functionv2-router-run/test2/0.0.1')
           .send({ code })
           .expect(200)
           .expect('content-type', /json/, done);
@@ -131,7 +251,7 @@ describe('FunctionRouter integration', () => {
 
       it('should returns the status 500 with text plain content', (done) => {
         request(routes)
-          .put('/functions/function-router-run/test2/run')
+          .put('/v2/functions/functionv2-router-run/test2/0.0.1/run')
           .expect(500)
           .expect('content-type', /json/)
           .expect('{"error":"My server is crashed"}', done);
@@ -147,7 +267,7 @@ describe('FunctionRouter integration', () => {
         `;
 
         request(routes)
-          .put('/functions/function-router-run/test2')
+          .put('/v2/functions/functionv2-router-run/test2/0.0.1')
           .send({ code })
           .expect(200)
           .expect('content-type', /json/, done);
@@ -155,7 +275,7 @@ describe('FunctionRouter integration', () => {
 
       it('should returns the status 500 with text plain content', (done) => {
         request(routes)
-          .put('/functions/function-router-run/test2/run')
+          .put('/v2/functions/functionv2-router-run/test2/0.0.1/run')
           .expect(304)
           .expect('', done);
       });
@@ -172,7 +292,7 @@ describe('FunctionRouter integration', () => {
         `;
 
         request(routes)
-          .put('/functions/function-router-run/test3')
+          .put('/v2/functions/functionv2-router-run/test3/0.0.1')
           .send({ code })
           .expect(200)
           .expect('content-type', /json/, done);
@@ -182,7 +302,7 @@ describe('FunctionRouter integration', () => {
         const person = { name: 'John Doe' };
 
         request(routes)
-          .put('/functions/function-router-run/test3/run?where[name]=John')
+          .put('/v2/functions/functionv2-router-run/test3/0.0.1/run?where[name]=John')
           .send({ person })
           .expect(200)
           .expect('content-type', /json/)
@@ -205,14 +325,14 @@ describe('FunctionRouter integration', () => {
         `;
 
         request(routes)
-          .put('/functions/function-router-run/test4').send({ code })
+          .put('/v2/functions/functionv2-router-run/test4/0.0.1').send({ code })
           .expect(200)
           .expect('content-type', /json/, done);
       });
 
       it('should uses the arbitrary library properly', (done) => {
         request(routes)
-          .put('/functions/function-router-run/test4/run')
+          .put('/v2/functions/functionv2-router-run/test4/0.0.1/run')
           .expect(200)
           .expect('content-type', /json/)
           .expect({ names: ['John', 'Doe'] }, done);

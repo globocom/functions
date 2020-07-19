@@ -23,10 +23,10 @@ describe('StorageInMemory', () => {
           MY_VAR: 'my var',
         },
       };
-      const x = await storage.putCode('backstage', 'test', code);
+      const x = await storage.putCode('backstage', 'test', 'latest', code);
       expect(x).to.be.eql('OK');
 
-      const code2 = await storage.getCode('backstage', 'test');
+      const code2 = await storage.getCode('backstage', 'test', 'latest');
 
       expect(code2.id).to.be.eql('test');
       expect(code2.namespace).to.be.eql('backstage');
@@ -44,10 +44,10 @@ describe('StorageInMemory', () => {
         hash: '123',
       };
 
-      const x = await storage.putCode('backstage', code.id, code);
+      const x = await storage.putCode('backstage', code.id, 'latest', code);
       expect(x).to.be.eql('OK');
 
-      const code2 = await storage.getCode('backstage', code.id);
+      const code2 = await storage.getCode('backstage', code.id, 'latest');
       expect(code2.created).to.be.eql(code2.updated);
     });
   });
@@ -56,7 +56,7 @@ describe('StorageInMemory', () => {
   describe('#getCode()', () => {
     describe('when code id is not found', () => {
       it('should yield a null', async () => {
-        const code = await storage.getCode('backstage', 'not-found');
+        const code = await storage.getCode('backstage', 'not-found', 'latest');
         expect(code).to.be.null;
       });
     });
@@ -70,21 +70,22 @@ describe('StorageInMemory', () => {
       this.code = {
         id: 'test',
         code: 'a = 1;',
+        version: 'latest',
         hash: '123',
       };
       await storage.deleteNamespace(this.namespace);
-      await storage.deleteCode(this.namespace, this.code.id);
+      await storage.deleteCode(this.namespace, this.code.id, 'latest');
     });
 
     it('when is configured in the namespace', async () => {
-      const x = await storage.putCode(this.namespace, this.code.id, this.code);
+      const x = await storage.putCode(this.namespace, this.code.id, 'latest', this.code);
       expect(x).to.be.eql('OK');
       await storage.putNamespace(this.namespace, {
         namespace: this.namespace,
         sentryDSN: 'http://my-sentry.io/foo',
       });
 
-      const result = await storage.getCode(this.namespace, this.code.id);
+      const result = await storage.getCode(this.namespace, this.code.id, 'latest');
       expect(result.sentryDSN).to.be.eql('http://my-sentry.io/foo');
     });
 
@@ -92,18 +93,18 @@ describe('StorageInMemory', () => {
       this.code.env = {
         sentryDSN: 'http://my-sentry.io/fooenv',
       };
-      const x = await storage.putCode(this.namespace, this.code.id, this.code);
+      const x = await storage.putCode(this.namespace, this.code.id, 'latest', this.code);
       expect(x).to.be.eql('OK');
 
-      const result = await storage.getCode(this.namespace, this.code.id);
+      const result = await storage.getCode(this.namespace, this.code.id, 'latest');
       expect(result.sentryDSN).to.be.eql('http://my-sentry.io/fooenv');
     });
 
     it('when isn`t configured', async () => {
-      const x = await storage.putCode(this.namespace, this.code.id, this.code);
+      const x = await storage.putCode(this.namespace, this.code.id, 'latest', this.code);
       expect(x).to.be.eql('OK');
 
-      const result = await storage.getCode(this.namespace, this.code.id);
+      const result = await storage.getCode(this.namespace, this.code.id, 'latest');
       expect(result.sentryDSN).to.be.null;
     });
   });
@@ -117,13 +118,13 @@ describe('StorageInMemory', () => {
         code: 'a = 1;',
         hash: '123',
       };
-      const putResponse = await storage.putCode(namespace, id, code);
+      const putResponse = await storage.putCode(namespace, id, 'latest', code);
       expect(putResponse).to.be.eql('OK');
 
-      const deleteResponse = await storage.deleteCode(namespace, id);
+      const deleteResponse = await storage.deleteCode(namespace, id, 'latest');
       expect(deleteResponse).to.be.eql(1);
 
-      const code2 = await storage.getCode(namespace, id);
+      const code2 = await storage.getCode(namespace, id, 'latest');
       expect(code2).to.be.null;
     });
   });
@@ -134,7 +135,7 @@ describe('StorageInMemory', () => {
         const preCache = code => code;
         const namespace = 'backstage';
         const id = 'cache-000';
-        const cacheResponse = await storage.getCodeByCache(namespace, id, { preCache });
+        const cacheResponse = await storage.getCodeByCache(namespace, id, 'latest', { preCache });
         expect(cacheResponse).to.be.null;
       });
     });
@@ -155,10 +156,10 @@ describe('StorageInMemory', () => {
           hash: '123',
         };
 
-        const putResponse = await storage.putCode(namespace, id, code);
+        const putResponse = await storage.putCode(namespace, id, 'latest', code);
         expect(putResponse).to.be.eql('OK');
 
-        const cacheResponse = await storage.getCodeByCache(namespace, id, { preCache });
+        const cacheResponse = await storage.getCodeByCache(namespace, id, 'latest', { preCache });
 
         expect(cacheResponse.preCached).to.be.true;
         expect(preCache.called).to.be.true;
@@ -181,21 +182,21 @@ describe('StorageInMemory', () => {
           hash: '123a',
         };
 
-        const putResponse = await storage.putCode(namespace, id, code);
+        const putResponse = await storage.putCode(namespace, id, 'latest', code);
 
         expect(putResponse).to.be.eql('OK');
         // populate the cache
-        let cacheResponse = await storage.getCodeByCache(namespace, id, { preCache });
+        let cacheResponse = await storage.getCodeByCache(namespace, id, 'latest', { preCache });
         expect(cacheResponse.preCachedByHash).to.be.eql('123a');
 
         // change item in database
         code.code = 'd = 2;';
         code.hash = '123b';
         const lastVersionID = cacheResponse.versionID;
-        await storage.putCode(namespace, id, code);
+        await storage.putCode(namespace, id, 'latest', code);
         preCache.called = false;
 
-        cacheResponse = await storage.getCodeByCache(namespace, id, { preCache });
+        cacheResponse = await storage.getCodeByCache(namespace, id, 'latest', { preCache });
 
         expect(cacheResponse.id).to.be.eql(id);
         expect(cacheResponse.code).to.be.eql('d = 2;');
@@ -222,6 +223,7 @@ describe('StorageInMemory', () => {
       code1 = {
         namespace: 'backstage',
         id: 'code1',
+        version: 'latest',
         code: 'c = 1;',
         hash: '123a',
       };
@@ -229,6 +231,7 @@ describe('StorageInMemory', () => {
       code2 = {
         namespace: 'backstage',
         id: 'code2',
+        version: 'latest',
         code: 'c = 1;',
         hash: '123b',
       };
@@ -247,8 +250,8 @@ describe('StorageInMemory', () => {
     describe('when all codes are found', () => {
       it('should return all codes', async () => {
         const [putResponse1, putResponse2] = await Promise.all([
-          storage.putCode(code1.namespace, code1.id, code1),
-          storage.putCode(code2.namespace, code2.id, code2),
+          storage.putCode(code1.namespace, code1.id, 'latest', code1),
+          storage.putCode(code2.namespace, code2.id, 'latest', code2),
         ]);
 
         expect(putResponse1).to.be.eql('OK');
@@ -263,16 +266,16 @@ describe('StorageInMemory', () => {
     describe('when some code are updated', () => {
       it('should return all codes', async () => {
         const [putResponse1, putResponse2] = await Promise.all([
-          storage.putCode(code1.namespace, code1.id, code1),
-          storage.putCode(code2.namespace, code2.id, code2),
+          storage.putCode(code1.namespace, code1.id, 'latest', code1),
+          storage.putCode(code2.namespace, code2.id, 'latest', code2),
         ]);
 
         expect(putResponse1).to.be.eql('OK');
         expect(putResponse2).to.be.eql('OK');
 
         const [savedCode1, savedCode2] = await Promise.all([
-          storage.getCode(code1.namespace, code1.id),
-          storage.getCode(code2.namespace, code2.id),
+          storage.getCode(code1.namespace, code1.id, 'latest'),
+          storage.getCode(code2.namespace, code2.id, 'latest'),
         ]);
 
         const code1VersionID = savedCode1.versionID;
@@ -285,7 +288,7 @@ describe('StorageInMemory', () => {
         expect(result2.preCached).to.be.true;
         code2.code = 'console.info("changed");';
 
-        const putResponse = await storage.putCode(code2.namespace, code2.id, code2);
+        const putResponse = await storage.putCode(code2.namespace, code2.id, 'latest', code2);
         expect(putResponse).to.be.eql('OK');
 
         [result1, result2] = await storage.getCodesByCache([code1, code2], { preCache });
@@ -302,15 +305,16 @@ describe('StorageInMemory', () => {
         const code = {
           namespace: 'backstage',
           id: 'test-env',
+          version: 'latest',
           code: 'a = 1;',
           hash: '123',
         };
-        const x = await storage.putCode(code.namespace, code.id, code);
+        const x = await storage.putCode(code.namespace, code.id, 'latest', code);
         expect(x).to.be.eql('OK');
 
-        await storage.putCodeEnviromentVariable(code.namespace, code.id, varName, 'true');
+        await storage.putCodeEnviromentVariable(code.namespace, code.id, 'latest', varName, 'true');
 
-        const { env, code: source } = await storage.getCode(code.namespace, code.id);
+        const { env, code: source } = await storage.getCode(code.namespace, code.id, 'latest');
         expect(source).to.be.eql(code.code);
         expect(env).to.be.eql({
           MY_SKIP: 'true',
@@ -321,7 +325,7 @@ describe('StorageInMemory', () => {
     describe('when target function is not found', () => {
       it('should raise an error', async () => {
         try {
-          await storage.putCodeEnviromentVariable('backstage', 'test-env-not-found', 'MY_SKIP', 'true');
+          await storage.putCodeEnviromentVariable('backstage', 'test-env-not-found', 'latest', 'MY_SKIP', 'true');
         } catch (err) {
           expect(err.message).to.be.eql('Function not found');
           expect(err.statusCode).to.be.eql(404);
@@ -346,12 +350,12 @@ describe('StorageInMemory', () => {
         };
         code.env[varName] = 'me';
 
-        const x = await storage.putCode(code.namespace, code.id, code);
+        const x = await storage.putCode(code.namespace, code.id, 'latest', code);
         expect(x).to.be.eql('OK');
 
-        await storage.deleteCodeEnviromentVariable(code.namespace, code.id, varName);
+        await storage.deleteCodeEnviromentVariable(code.namespace, code.id, 'latest', varName);
 
-        const { env, code: source } = await storage.getCode(code.namespace, code.id);
+        const { env, code: source } = await storage.getCode(code.namespace, code.id, 'latest');
         expect(source).to.be.eql(code.code);
         expect(env).to.be.eql({});
       });
@@ -371,16 +375,16 @@ describe('StorageInMemory', () => {
         };
 
         try {
-          const x = await storage.putCode(code.namespace, code.id, code);
+          const x = await storage.putCode(code.namespace, code.id, 'latest', code);
           expect(x).to.be.eql('OK');
-          await storage.deleteCodeEnviromentVariable(code.namespace, code.id, varName);
+          await storage.deleteCodeEnviromentVariable(code.namespace, code.id, 'latest', varName);
           throw new Error('Not raised an expection');
         } catch (err) {
           expect(err.message).to.be.eql('Env variable not found');
           expect(err.statusCode).to.be.eql(404);
         }
 
-        const { env, code: source } = await storage.getCode(code.namespace, code.id);
+        const { env, code: source } = await storage.getCode(code.namespace, code.id, 'latest');
         expect(source).to.be.eql(code.code);
         expect(env).to.be.eql({
           TO_MAINTAIN: 'true',
@@ -397,7 +401,7 @@ describe('StorageInMemory', () => {
         };
 
         try {
-          await storage.deleteCodeEnviromentVariable(code.namespace, code.id, varName);
+          await storage.deleteCodeEnviromentVariable(code.namespace, code.id, 'latest', varName);
         } catch (err) {
           expect(err.message).to.be.eql('Function not found');
           expect(err.statusCode).to.be.eql(404);
@@ -451,9 +455,9 @@ describe('StorageInMemory', () => {
   describe('#search', () => {
     describe('with valid values', () => {
       beforeEach(() => {
-        storage.setNamespaceMember('namespace1', 'function1');
-        storage.setNamespaceMember('namespace1', 'function2');
-        storage.setNamespaceMember('namespace2', 'function1');
+        storage.setNamespaceMember('namespace1', 'function1', 'latest');
+        storage.setNamespaceMember('namespace1', 'function2', 'latest');
+        storage.setNamespaceMember('namespace2', 'function1', 'latest');
       });
 
       it('with namespace', async () => {
@@ -463,10 +467,12 @@ describe('StorageInMemory', () => {
             {
               id: 'function1',
               namespace: 'namespace1',
+              version: 'latest',
             },
             {
               id: 'function2',
               namespace: 'namespace1',
+              version: 'latest',
             },
           ],
           page: 1,
@@ -481,6 +487,7 @@ describe('StorageInMemory', () => {
             {
               id: 'function1',
               namespace: 'namespace1',
+              version: 'latest',
             },
           ],
           page: 1,

@@ -11,10 +11,10 @@ describe('Metric', () => {
     });
 
     it('should increment metrics in registry', () => {
-      new Metric().observeFunctionRun({ namespace: 'xpto', id: 'blah', status: 403 });
+      new Metric().observeFunctionRun({ namespace: 'xpto', id: 'blah', version: 'latest', status: 403 });
       const data = prometheusClient.register.metrics();
-      expect(data).to.be.include('backstage_functions_function_run_total{namespace="xpto",id="blah",status="4xx"} 1');
-      expect(data).to.be.include('backstage_functions_function_run_duration_seconds_bucket{le="0.05",namespace="xpto",id="blah"} 1');
+      expect(data).to.be.include('backstage_functions_function_run_total{namespace="xpto",id="blah",version="latest",status="4xx"} 1');
+      expect(data).to.be.include('backstage_functions_function_run_duration_seconds_bucket{le="0.05",namespace="xpto",id="blah",version="latest"} 1');
 
       expect(data).to.be.include('backstage_functions_overview_run_total{status="4xx"} 1');
       expect(data).to.be.include('backstage_functions_overview_run_duration_seconds_bucket{le="0.05"} 1');
