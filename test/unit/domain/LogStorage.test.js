@@ -13,17 +13,17 @@ const Graygelf = require('../../GelfServer');
 describe('StdoutLogStorage', () => {
   /* eslint no-underscore-dangle: ["error", { "allow": ["_stdout", "_stderr"] }] */
 
-  const logStorage = new StdoutLogStorage('test-namespace', 'test-id');
+  const logStorage = new StdoutLogStorage('test-namespace', 'test-id', 'latest');
 
   it('should create prefixed stdout console', () => {
     const stdout = logStorage.console._stdout;
-    expect(stdout.prefix).to.be.eql('info: [namespace:test-namespace, id:test-id]');
+    expect(stdout.prefix).to.be.eql('info: [namespace:test-namespace, id:test-id, version:latest]');
     expect(stdout.buf).to.be.eql(process.stdout);
   });
 
   it('should create prefixed stderr console', () => {
     const stderr = logStorage.console._stderr;
-    expect(stderr.prefix).to.be.eql('error: [namespace:test-namespace, id:test-id]');
+    expect(stderr.prefix).to.be.eql('error: [namespace:test-namespace, id:test-id, version:latest]');
     expect(stderr.buf).to.be.eql(process.stderr);
   });
 });
@@ -57,7 +57,7 @@ describe('GelfLogStorage', () => {
     });
 
     config.log.hosts = ['localhost', '127.0.0.1'];
-    logStorage = new GelfLogStorage('test-namespace', 'test-id', req);
+    logStorage = new GelfLogStorage('test-namespace', 'test-id', 'latest', req);
   });
 
   after(() => {
@@ -84,7 +84,7 @@ describe('GelfLogStorage', () => {
 
   describe('when has more than one host in config.log.hosts', () => {
     before(() => {
-      newLogStorage = new GelfLogStorage('test-namespace', 'test-id', req);
+      newLogStorage = new GelfLogStorage('test-namespace', 'test-id', 'latest', req);
     });
 
     after(() => {
@@ -129,7 +129,7 @@ describe('GelfLogStorage', () => {
 
       it('should receive short_message attribute', () => {
         expect(receivedMsg.short_message).to.be.eql(
-          'Function "test-namespace/test-id.js" was executed with status 200 "OK"'
+          'Function "test-namespace/test-id/latest.js" was executed with status 200 "OK"'
         );
       });
 
@@ -153,7 +153,7 @@ describe('GelfLogStorage', () => {
       });
 
       it('should receive file attribute', () => {
-        expect(receivedMsg._file).to.be.eql('test-namespace/test-id.js');
+        expect(receivedMsg._file).to.be.eql('test-namespace/test-id/latest.js');
       });
 
       it('should receive rid attribute extracted from HTTP header setting', () => {

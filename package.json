@@ -40,6 +40,7 @@
     "prom-client": "^11.5.3",
     "raven": "^2.2.1",
     "request": "^2.81.0",
+    "semver": "^7.3.2",
     "stack-trace": "^0.0.9",
     "uuid": "^3.0.1",
     "winston": "^2.2.0"
