@@ -6,7 +6,7 @@
   "scripts": {
     "test": "REDIS_KEY_PREFIX=test nyc mocha --ui bdd --recursive test/",
     "send_cover": "nyc report --reporter=text-lcov | coveralls",
-    "start_dev": "nf -j Procfile.local -e .env.local start",
+    "start_dev": "which nf && nf -j Procfile.local -e .env.local start",
     "start_sandbox": "NUM_CPUS=1 STORAGE=inmemory nf -j Procfile.sandbox -e .env.local start",
     "lint": "eslint lib test"
   },
@@ -27,6 +27,11 @@
   "license": "MIT",
   "dependencies": {
     "@globocom/backstage-functions-sandbox": "^0.5.3",
+    "@opentelemetry/core": "^0.19.0",
+    "@opentelemetry/exporter-collector-grpc": "^0.19.0",
+    "@opentelemetry/instrumentation-express": "^0.16.0",
+    "@opentelemetry/instrumentation-http": "^0.19.0",
+    "@opentelemetry/node": "^0.19.0",
     "async": "^2.0.1",
     "body-parser": "^1.15.2",
     "deepcopy": "^0.6.3",
