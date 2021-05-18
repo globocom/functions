@@ -93,9 +93,9 @@
       }
     },
     "@opentelemetry/api": {
-      "version": "1.0.0-rc.0",
-      "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/@opentelemetry/api/-/api-1.0.0-rc.0.tgz",
-      "integrity": "sha1-DHw/XhKF+ZzttWPXStGtuYIrUUQ="
+      "version": "0.18.1",
+      "resolved": "https://registry.npmjs.org/@opentelemetry/api/-/api-0.18.1.tgz",
+      "integrity": "sha512-pKNxHe3AJ5T2N5G3AlT9gx6FyF5K2FS9ZNc+FipC+f1CpVF/EY+JHTJ749dnM2kWIgZTbDJFiGMuc0FYjNSCOg=="
     },
     "@opentelemetry/api-metrics": {
       "version": "0.19.0",
@@ -166,8 +166,8 @@
     },
     "@opentelemetry/instrumentation": {
       "version": "0.19.0",
-      "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/@opentelemetry/instrumentation/-/instrumentation-0.19.0.tgz",
-      "integrity": "sha1-IZAV+CE0wp5q6rXgAjXmGHocsfQ=",
+      "resolved": "https://registry.npmjs.org/@opentelemetry/instrumentation/-/instrumentation-0.19.0.tgz",
+      "integrity": "sha512-rvbJZNzgqVDO7/lvKdXoS6WJviJyV+d0lb43tF4cgFyXBvqNGCg8imS/Si4tBF0md1OvOjU+qNvjBKr/whXWOg==",
       "requires": {
         "@opentelemetry/api-metrics": "0.19.0",
         "require-in-the-middle": "^5.0.3",
@@ -177,24 +177,24 @@
       "dependencies": {
         "lru-cache": {
           "version": "6.0.0",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/lru-cache/-/lru-cache-6.0.0.tgz",
-          "integrity": "sha1-bW/mVw69lqr5D8rR2vo7JWbbOpQ=",
+          "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-6.0.0.tgz",
+          "integrity": "sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==",
           "requires": {
             "yallist": "^4.0.0"
           }
         },
         "semver": {
           "version": "7.3.5",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/semver/-/semver-7.3.5.tgz",
-          "integrity": "sha1-C2Ich5NI2JmOSw5L6Us/EuYBjvc=",
+          "resolved": "https://registry.npmjs.org/semver/-/semver-7.3.5.tgz",
+          "integrity": "sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==",
           "requires": {
             "lru-cache": "^6.0.0"
           }
         },
         "yallist": {
           "version": "4.0.0",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/yallist/-/yallist-4.0.0.tgz",
-          "integrity": "sha1-m7knkNnA7/7GO+c1GeEaNQGaOnI="
+          "resolved": "https://registry.npmjs.org/yallist/-/yallist-4.0.0.tgz",
+          "integrity": "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="
         }
       }
     },
@@ -207,6 +207,13 @@
         "@opentelemetry/core": "^0.19.0",
         "@opentelemetry/instrumentation": "^0.19.0",
         "@opentelemetry/semantic-conventions": "^0.19.0"
+      },
+      "dependencies": {
+        "@opentelemetry/api": {
+          "version": "1.0.0-rc.0",
+          "resolved": "https://registry.npmjs.org/@opentelemetry/api/-/api-1.0.0-rc.0.tgz",
+          "integrity": "sha512-iXKByCMfrlO5S6Oh97BuM56tM2cIBB0XsL/vWF/AtJrJEKx4MC/Xdu0xDsGXMGcNWpqF7ujMsjjnp0+UHBwnDQ=="
+        }
       }
     },
     "@opentelemetry/instrumentation-http": {
@@ -317,8 +324,8 @@
     },
     "@opentelemetry/tracing": {
       "version": "0.19.0",
-      "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/@opentelemetry/tracing/-/tracing-0.19.0.tgz",
-      "integrity": "sha1-jJTPK20lQtiGaphjGCWWX1285cQ=",
+      "resolved": "https://registry.npmjs.org/@opentelemetry/tracing/-/tracing-0.19.0.tgz",
+      "integrity": "sha512-RUmPZLQi4+nlHwTFpHqU45TMW+osIraDtf0jcFKLacKltGIft65tVxIEVn1uF9N9eG7NZzjXLo3jsvCzpavJ8Q==",
       "requires": {
         "@opentelemetry/core": "0.19.0",
         "@opentelemetry/resources": "0.19.0",
@@ -2594,16 +2601,16 @@
     },
     "is-core-module": {
       "version": "2.4.0",
-      "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/is-core-module/-/is-core-module-2.4.0.tgz",
-      "integrity": "sha1-jp/I4VAnsBFBgCbpjw5vTYYwXME=",
+      "resolved": "https://registry.npmjs.org/is-core-module/-/is-core-module-2.4.0.tgz",
+      "integrity": "sha512-6A2fkfq1rfeQZjxrZJGerpLCTHRNEBiSgnu0+obeJpEPZRUooHgsizvzv0ZjJwOz3iWIHdJtVWJ/tmPr3D21/A==",
       "requires": {
         "has": "^1.0.3"
       },
       "dependencies": {
         "has": {
           "version": "1.0.3",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/has/-/has-1.0.3.tgz",
-          "integrity": "sha1-ci18v8H2qoJB8W3YFOAR4fQeh5Y=",
+          "resolved": "https://registry.npmjs.org/has/-/has-1.0.3.tgz",
+          "integrity": "sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==",
           "requires": {
             "function-bind": "^1.1.1"
           }
@@ -6071,8 +6078,8 @@
     },
     "require-in-the-middle": {
       "version": "5.1.0",
-      "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/require-in-the-middle/-/require-in-the-middle-5.1.0.tgz",
-      "integrity": "sha1-t2j4ADd7R1JtAmu/Wn9yfxbrQS8=",
+      "resolved": "https://registry.npmjs.org/require-in-the-middle/-/require-in-the-middle-5.1.0.tgz",
+      "integrity": "sha512-M2rLKVupQfJ5lf9OvqFGIT+9iVLnTmjgbOmpil12hiSQNn5zJTKGPoIisETNjfK+09vP3rpm1zJajmErpr2sEQ==",
       "requires": {
         "debug": "^4.1.1",
         "module-details-from-path": "^1.0.3",
@@ -6081,26 +6088,26 @@
       "dependencies": {
         "debug": {
           "version": "4.3.1",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/debug/-/debug-4.3.1.tgz",
-          "integrity": "sha1-8NIpxQXgxtjEmsVT0bE9wYP2su4=",
+          "resolved": "https://registry.npmjs.org/debug/-/debug-4.3.1.tgz",
+          "integrity": "sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==",
           "requires": {
             "ms": "2.1.2"
           }
         },
         "ms": {
           "version": "2.1.2",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/ms/-/ms-2.1.2.tgz",
-          "integrity": "sha1-0J0fNXtEP0kzgqjrPM0YOHKuYAk="
+          "resolved": "https://registry.npmjs.org/ms/-/ms-2.1.2.tgz",
+          "integrity": "sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w=="
         },
         "path-parse": {
           "version": "1.0.6",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/path-parse/-/path-parse-1.0.6.tgz",
-          "integrity": "sha1-1i27VnlAXXLEc37FhgDp3c8G0kw="
+          "resolved": "https://registry.npmjs.org/path-parse/-/path-parse-1.0.6.tgz",
+          "integrity": "sha512-GSmOT2EbHrINBf9SR7CDELwlJ8AENk3Qn7OikK4nFYAu3Ote2+JYNVvkpAEQm3/TLNEJFD/xZJjzyxg3KBWOzw=="
         },
         "resolve": {
           "version": "1.20.0",
-          "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/resolve/-/resolve-1.20.0.tgz",
-          "integrity": "sha1-YpoBP7P3B1XW8LeTXMHCxTeLGXU=",
+          "resolved": "https://registry.npmjs.org/resolve/-/resolve-1.20.0.tgz",
+          "integrity": "sha512-wENBPt4ySzg4ybFQW2TT1zMQucPK95HSh/nq2CFTZVOGut2+pQvSsgtda4d26YrYcr067wjbmzOG8byDPBX63A==",
           "requires": {
             "is-core-module": "^2.2.0",
             "path-parse": "^1.0.6"
@@ -6291,8 +6298,8 @@
     },
     "shimmer": {
       "version": "1.2.1",
-      "resolved": "https://artifactory.globoi.com/artifactory/api/npm/npm-repos/shimmer/-/shimmer-1.2.1.tgz",
-      "integrity": "sha1-YQhZ994ye1h+/r9QH7QxF/mv8zc="
+      "resolved": "https://registry.npmjs.org/shimmer/-/shimmer-1.2.1.tgz",
+      "integrity": "sha512-sQTKC1Re/rM6XyFM6fIAGHRPVGvyXfgzIDvzoq608vM+jeyVD0Tu1E6Np0Kc2zAIFWIj963V2800iF/9LPieQw=="
     },
     "signal-exit": {
       "version": "3.0.2",
