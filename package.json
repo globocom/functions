@@ -21,7 +21,7 @@
     "backstage"
   ],
   "engines": {
-    "node": ">=8.9.1"
+    "node": ">=8.13.0"
   },
   "author": "Backstage Team <backstage@corp.globo.com>",
   "license": "MIT",
