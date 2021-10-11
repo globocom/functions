@@ -1,3 +1,5 @@
 extends: airbnb
 rules:
   no-param-reassign: [error, { props: false }]
+  no-unused-vars: [2, {args: after-used, argsIgnorePattern: "_"}]
+  new-cap: 0
