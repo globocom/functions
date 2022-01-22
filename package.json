@@ -47,7 +47,7 @@
     "jsonschema": "^1.1.0",
     "lodash": "^4.16.2",
     "morgan": "^1.7.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^3.1.1",
     "opentracing": "^0.14.4",
     "prom-client": "^11.5.3",
     "raven": "^2.2.1",
