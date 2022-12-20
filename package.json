@@ -1,6 +1,6 @@
 {
   "name": "@globocom/backstage-functions",
-  "version": "0.3.2",
+  "version": "0.3.3-0",
   "description": "Remote serverless code executor",
   "main": "index.js",
   "scripts": {
