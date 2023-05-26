@@ -1,13 +1,13 @@
 {
   "name": "@globocom/backstage-functions",
-  "version": "0.4.1",
+  "version": "0.6.0-rc.3",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
     "@globocom/backstage-functions-sandbox": {
-      "version": "0.5.4-next.0",
-      "resolved": "https://artifactory.globoi.com:443/artifactory/api/npm/npm-local/@globocom/backstage-functions-sandbox/-/@globocom/backstage-functions-sandbox-0.5.4-next.0.tgz",
-      "integrity": "sha512-uXCzisk62rMkE9bBU5pilzL+pDd24EyHQ+dZEOFwUpaIzeKnrDwas5t70gAezW8jaMWTW3s/bkADu/NG4hEHFw==",
+      "version": "0.5.3",
+      "resolved": "https://registry.npmjs.org/@globocom/backstage-functions-sandbox/-/backstage-functions-sandbox-0.5.3.tgz",
+      "integrity": "sha512-+KNd1bM0QoqZ4UufHKe8NlZbahlx7lrLODSyHKDPS0669vEiWT/kxoRB6c/epRJms/Mf6yncmRqxH8nmNq1tyA==",
       "requires": {
         "once": "^1.4.0",
         "stack-trace": "^0.0.9"
