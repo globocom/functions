@@ -363,6 +363,40 @@ describe('PUT /functions/:namespace/:id/env/:env', () => {
     });
   });
 
+  describe('when define secret env variable', () => {
+    it('should create an enviroment variable', (done) => {
+      request(routes)
+        .put('/functions/backstage/correct/env/CLIENT_SECRET')
+        .set('content-type', 'application/json')
+        .send('"FOOBAR"')
+        .expect(() => {
+          const memoryStorage = routes.get('memoryStorage');
+          expect(memoryStorage.lastEnvSet).to.be.eql({
+            namespace: 'backstage',
+            id: 'correct',
+            env: 'CLIENT_SECRET',
+            value: 'FOOBAR',
+          });
+        })
+        .expect(204, done);
+    });
+  });
+
+  describe('when get called, not return secret variable', () => {
+    it('should create an enviroment variable', (done) => {
+      request(routes)
+        .get('/functions/backstage/correct')
+        .set('content-type', 'application/json')
+        .send()
+        .expect((res) => {
+          expect(res.body.env).to.be.eql({
+            MY_VAR: 'MY VALUE',
+          });
+        })
+        .expect(200, done);
+    });
+  });
+
   describe('when the target function it\'s not exist', () => {
     it('should fail the request with 404 error', (done) => {
       request(routes)
