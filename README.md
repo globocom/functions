@@ -39,6 +39,14 @@ make setup
 make run
 ```
 
+## Configuration
+
+To format your log in `json`, please run:
+
+```sh
+export LOG_APP_FORMAT=json
+```
+
 ## Running locally via Docker
 ### Requirements
 - Docker 1.12+
