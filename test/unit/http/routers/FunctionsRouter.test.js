@@ -313,7 +313,8 @@ describe('PUT /functions/pipeline', () => {
       request(routes)
         .put('/functions/pipeline')
         .expect(400, {
-          error: 'Pass step by querystring is required',
+          error: 'Invalid pipeline configuration',
+          details: ['instance requires property "steps"'],
         }, done);
     });
   });
@@ -321,7 +322,13 @@ describe('PUT /functions/pipeline', () => {
   describe('when step does not exists', () => {
     it('should return a not found request', (done) => {
       request(routes)
-        .put('/functions/pipeline?steps[0]=backstage/not-found')
+        .put('/functions/pipeline')
+        .send({ steps: [
+          {
+            namespace: 'backstage',
+            id: 'not-found',
+          },
+        ] })
         .expect(404, {
           error: 'Code \'backstage/not-found\' is not found',
         }, done);
@@ -331,8 +338,22 @@ describe('PUT /functions/pipeline', () => {
   describe('when step use two steps', () => {
     it('should return a result', (done) => {
       request(routes)
-        .put('/functions/pipeline?steps[0]=backstage/step1&steps[1]=backstage/step2')
-        .send({ x: 1 })
+        .put('/functions/pipeline')
+        .send({
+          steps: [
+            {
+              namespace: 'backstage',
+              id: 'step1',
+            },
+            {
+              namespace: 'backstage',
+              id: 'step2',
+            },
+          ],
+          payload: {
+            x: 1,
+          },
+        })
         .expect(200, { x: 200 }, done);
     });
   });
