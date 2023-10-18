@@ -314,7 +314,7 @@ describe('PUT /functions/pipeline', () => {
         .put('/functions/pipeline')
         .expect(400, {
           error: 'Invalid pipeline configuration',
-          details: [ 'instance requires property "steps"' ],
+          details: ['instance requires property "steps"'],
         }, done);
     });
   });
