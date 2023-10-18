@@ -140,10 +140,10 @@ function main(req, res) {
 }
 ```
 
-```
-curl -g -i -X PUT 'http://localhost:8100/functions/pipeline?steps[0]=namespace/function0&steps[1]=namespace/function1' \
-    -H 'content-type: application/json'
-    -d '{"x": 1}'
+``` bash
+$ curl -g -i -X PUT 'http://localhost:8100/functions/pipeline' \      
+    -H 'content-type: application/json' \
+    -d '{"steps": [{"namespace":"namespace", "id":"function0"}, {"namespace":"namespace", "id": "function1"}], "payload":{"x":1}}'
 ```
 
 Considering the curl above, the pipeline result would be like this:
