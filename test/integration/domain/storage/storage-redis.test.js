@@ -1,8 +1,8 @@
+const { v4: uuidV4 } = require('uuid');
 const expect = require('chai').expect;
 const deepcopy = require('deepcopy');
 const sinon = require('sinon');
 const EventEmitter = require('events');
-const uuidV4 = require('uuid/v4');
 
 const StorageRedis = require('../../../../lib/domain/storage/redis');
 const config = require('../../../../lib/support/config');

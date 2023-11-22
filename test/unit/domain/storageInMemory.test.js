@@ -1,5 +1,5 @@
+const { v4: uuidV4 } = require('uuid');
 const expect = require('chai').expect;
-const uuidV4 = require('uuid/v4');
 const StorageInMemory = require('../../../lib/domain/storage/InMemory');
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;

@@ -1,8 +1,5 @@
-FROM mhart/alpine-node:8.15.1
-RUN apk add --no-cache make gcc g++ python
+FROM node:20.9.0-alpine
+RUN apk add --no-cache make gcc g++ python3
 WORKDIR /application/functions
-ADD lib lib
-ADD package.json .
-ADD npm-shrinkwrap.json .
-
+ADD . .
 RUN npm install
