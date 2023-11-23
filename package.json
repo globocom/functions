@@ -42,6 +42,7 @@
     "express": "^4.14.0",
     "express-opentracing": "^0.1.1",
     "gelf": "^2.0.1",
+    "google-auth-library": "^9.2.0",
     "ioredis": "^3.1.4",
     "jaeger-client": "^3.18.0",
     "jsonschema": "^1.1.0",
