@@ -27,6 +27,8 @@
   "license": "MIT",
   "dependencies": {
     "@globocom/backstage-functions-sandbox": "^0.5.3",
+    "@google-cloud/functions": "^3.0.1",
+    "@google-cloud/storage": "^7.6.0",
     "@opentelemetry/api": "^0.18.1",
     "@opentelemetry/core": "^0.19.0",
     "@opentelemetry/exporter-collector-grpc": "^0.19.0",
@@ -48,6 +50,7 @@
     "jsonschema": "^1.1.0",
     "lodash": "^4.16.2",
     "morgan": "^1.7.0",
+    "multiparty": "^4.2.3",
     "node-fetch": "^2.6.0",
     "opentracing": "^0.14.4",
     "prom-client": "^11.5.3",
