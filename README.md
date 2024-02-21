@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/globocom/functions.png?branch=master)](https://travis-ci.org/globocom/functions)
-[![Coverage Status](https://coveralls.io/repos/github/globocom/functions/badge.svg?branch=master)](https://coveralls.io/github/globocom/functions?branch=master)
+![Tests](https://github.com/globocom/functions/actions/workflows/tests.yml/badge.svg)
 
 # Backstage Functions
 Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Platform able to store and execute code.
