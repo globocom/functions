@@ -323,7 +323,7 @@ describe('PUT /functions/pipeline', () => {
       request(routes)
         .put('/functions/pipeline?steps[0]=backstage/not-found')
         .expect(404, {
-          error: 'Code \'backstage/not-found\' is not found', details: {}
+          error: 'Code \'backstage/not-found\' is not found', details: {},
         }, done);
     });
   });
