@@ -382,15 +382,15 @@ describe('PUT /functions/:namespace/:id/env/:env', () => {
     });
   });
 
-  describe('when get called, not return secret variable', () => {
-    it('should create an enviroment variable', (done) => {
+  describe('when get called', () => {
+    it('should not return a secret variable', (done) => {
       request(routes)
         .get('/functions/backstage/correct')
         .set('content-type', 'application/json')
         .send()
         .expect((res) => {
           expect(res.body.env).to.be.eql({
-            MY_VAR: 'MY VALUE',
+            MY_VAR: 'MY_VALUE',
           });
         })
         .expect(200, done);

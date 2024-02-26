@@ -23,6 +23,9 @@ describe('Pipeline', () => {
     beforeEach(() => {
       req = {
         body: {},
+        headers: {
+          'x-request-id': 'foobar',
+        },
       };
       sandbox = new Sandbox({});
       step200 = {
