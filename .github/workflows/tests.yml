@@ -1,0 +1,41 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: --name redis-test
+    steps:
+    - name: Use Node.js 8.x
+      uses: actions/setup-node@v2
+      with:
+        node-version: '8.x'
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Setup
+      run: |
+        make setup
+    - name: Lint
+      run: |
+        make lint
+    - name: Unit & Integration Tests
+      env:
+        REDIS_ENDPOINT: "localhost:${{ job.services.redis.ports['6379'] }}"
+      run: |
+        REDIS_ENDPOINT=${REDIS_ENDPOINT} make test

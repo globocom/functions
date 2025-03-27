@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/globocom/functions.png?branch=master)](https://travis-ci.org/globocom/functions)
-[![Coverage Status](https://coveralls.io/repos/github/globocom/functions/badge.svg?branch=master)](https://coveralls.io/github/globocom/functions?branch=master)
-
-# Backstage Functions
+ ![Tests](https://github.com/globocom/functions/actions/workflows/tests.yml/badge.svg) ![No Maintenance Intended](https://img.shields.io/maintenance/no/2024.svg)
+# DEPRECATED! Backstage Functions
 Backstage Functions is an Open Source [Serverless](http://martinfowler.com/articles/serverless.html) Platform able to store and execute code.
+
+`NOTE: This is no longer maintained, please consider using other serverless engine projects like fn or OpenFaaS instead.`
 
 ## Benefits
 - Your code will be executed in an isolated environment

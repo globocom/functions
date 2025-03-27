@@ -55,6 +55,10 @@ class FakeStorage extends Storage {
     return {
       hash: 'my-hash-123',
       code: 'function main() {}',
+      env: {
+        MY_VAR: 'MY_VALUE',
+        CLIENT_SECRET: 'FOOBAR',
+      },
     };
   }
 
