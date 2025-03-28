@@ -1,15 +1,15 @@
 version: '3'
 services:
   web:
-    container_name: functions_app
-    image: globocom/functions
+    # image: globocom/functions
+    build: .
     ports:
       - "8100:8100"
-    networks:
-      - functions_net
+    # networks:
+    #   - functions_net
     depends_on:
      - redis
-    command: node lib/app.js
+    command: node /application/functions/lib/app.js
     volumes:
       - .:/application/functions
       - node_vol:/application/functions/node_modules
@@ -17,15 +17,17 @@ services:
       REDIS_ENDPOINT: redis://redis:6379/0
   redis:
     container_name: functions_db
+    ports:
+      - "6379:6379"
     image: redis
     volumes:
       - redis_vol:/data
-    networks:
-      - functions_net
+    # networks:
+    #   - functions_net
 
 volumes:
   redis_vol:
   node_vol:
 
-networks:
-  functions_net:
+# networks:
+#   functions_net:

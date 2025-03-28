@@ -14,7 +14,7 @@ help:
 	@echo '    lint ..................... runs code linter'
 
 setup: install_node
-	npm install
+	npm install --legacy-peer-deps
 
 run:
 	npm run start_dev

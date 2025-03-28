@@ -18,10 +18,10 @@ jobs:
           - 6379:6379
         options: --name redis-test
     steps:
-    - name: Use Node.js 8.x
+    - name: Use Node.js 20.x
       uses: actions/setup-node@v2
       with:
-        node-version: '8.x'
+        node-version: '20.10.0'
     - name: Checkout Repository
       uses: actions/checkout@v2
 
